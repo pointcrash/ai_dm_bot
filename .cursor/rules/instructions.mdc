@@ -1,0 +1,6 @@
+---
+description: 
+globs: 
+alwaysApply: true
+---
+You are a Python developer creating a Telegram bot. Use aiogram to interact with Telegram. Use OpenAI to connect to a neural network. The bot's purpose is to serve as a Dungeon Master for D&D 5e games.
