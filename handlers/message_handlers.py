@@ -2,11 +2,15 @@ from aiogram.types import Message
 from aiogram.filters import Command
 from services.openai_service import OpenAIService
 from services.campaign_service import CampaignService
+from services.group_service import GroupService
+from services.character_service import CharacterService
 from config.hard_messages import START_MESSAGE, CLEAR_HISTORY_MESSAGE, HELP_MESSAGE, CAMPAIGN_MESSAGE
 
 # Инициализируем сервисы
 openai_service = OpenAIService()
 campaign_service = CampaignService()
+group_service = GroupService()
+character_service = CharacterService()
 
 # Словарь для хранения состояния настройки кампании
 campaign_states = {}
@@ -98,4 +102,49 @@ async def cmd_create_summary(message: Message):
         await message.answer(f"✅ Саммари создано:\n\n{history.summary}")
         
     except Exception as e:
-        await message.answer(f"Произошла ошибка при создании саммари: {str(e)}") 
+        await message.answer(f"Произошла ошибка при создании саммари: {str(e)}")
+
+async def cmd_group_members(message: Message):
+    """Показать текущий состав группы"""
+    members = group_service.get_formatted_members(message.from_user.id)
+    await message.answer(members)
+
+async def cmd_join_group(message: Message):
+    """Добавить активного персонажа в группу"""
+    active_character = character_service.get_active_character(message.from_user.id)
+    
+    if not active_character:
+        await message.answer("❌ У вас нет активного персонажа. Сначала создайте и активируйте персонажа.")
+        return
+        
+    if group_service.add_member(message.from_user.id, active_character['name']):
+        await message.answer(f"✅ {active_character['name']} присоединился к группе!")
+    else:
+        await message.answer(f"❌ {active_character['name']} уже состоит в группе.")
+
+async def cmd_leave_group(message: Message):
+    """Удалить активного персонажа из группы"""
+    active_character = character_service.get_active_character(message.from_user.id)
+    
+    if not active_character:
+        await message.answer("❌ У вас нет активного персонажа.")
+        return
+        
+    if group_service.remove_member(message.from_user.id, active_character['name']):
+        await message.answer(f"✅ {active_character['name']} покинул группу.")
+    else:
+        await message.answer(f"❌ {active_character['name']} не состоит в группе.")
+
+async def cmd_remove_member(message: Message):
+    """Удалить участника из группы"""
+    # Получаем имя персонажа из сообщения
+    args = message.text.split()
+    if len(args) != 2:
+        await message.answer("❌ Использование: /remove_member <имя_персонажа>")
+        return
+        
+    character_name = args[1]
+    if group_service.remove_member(message.from_user.id, character_name):
+        await message.answer(f"✅ {character_name} удален из группы.")
+    else:
+        await message.answer(f"❌ Персонаж {character_name} не найден в группе.") 
