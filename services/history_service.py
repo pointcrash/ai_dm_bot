@@ -35,10 +35,7 @@ class ChatHistory:
         self.messages.clear()
 
     def get_messages(self) -> List[dict]:
-        messages = []
-        if self.summary:
-            messages.append({"role": "system", "content": f"Предыдущий контекст диалога: {self.summary}"})
-        messages.extend([{"role": msg.role, "content": msg.content} for msg in self.messages])
+        messages = [{"role": msg.role, "content": msg.content} for msg in self.messages]
         return messages
 
     def clear(self):
