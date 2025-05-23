@@ -67,7 +67,11 @@ async def handle_message(message: Message):
         await message.bot.send_chat_action(chat_id=message.chat.id, action="typing")
         
         # Получаем ответ от OpenAI с учетом истории диалога
-        response = await openai_service.get_response(message.from_user.id, message.text)
+        response = await openai_service.get_response(
+            user_id=message.from_user.id,
+            user_message=message.text,
+            chat_id=message.chat.id if message.chat.type != "private" else None
+        )
         
         # Отправляем ответ пользователю
         await message.answer(response)

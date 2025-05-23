@@ -3,6 +3,8 @@ from dataclasses import dataclass, field
 from datetime import datetime
 from config.config import MAIN_PROMT, MAX_HISTORY_LENGTH
 from services.summary_service import SummaryService
+from services.character_service import CharacterService
+from services.group_service import GroupService
 
 @dataclass
 class Message:
@@ -58,6 +60,57 @@ class ChatHistory:
 class HistoryService:
     def __init__(self):
         self.chats: Dict[int, ChatHistory] = {}
+        self.character_service = CharacterService()
+        self.group_service = GroupService()
+
+    def _format_character_context(self, character: dict) -> str:
+        """Format character information into a context string for the AI"""
+        context = f"Персонаж по имени {character['name']}, "
+        context += f"{character['race']} {character['class_name']} {character['level']} уровня. "
+        
+        # Add character description if available
+        if character.get('description'):
+            context += f"\nОписание персонажа: {character['description']}\n"
+        
+        # Add key abilities
+        context += "\nОсновные характеристики персонажа:\n"
+        for ability, data in character['abilities'].items():
+            context += f"- {data['name']}: {data['value']} (модификатор {data['modifier']:+d})\n"
+        
+        # Add current state
+        hp = character['base_stats']['hit_points']
+        context += f"\nТекущее состояние:\n"
+        context += f"- Здоровье: {hp['current']}/{hp['maximum']} (временные: {hp['temporary']})\n"
+        context += f"- Класс брони: {character['base_stats']['armor_class']['value']}\n"
+        
+        # Add equipment
+        context += "\nСнаряжение:\n"
+        if character['equipment']['weapons']['items']:
+            context += f"- Оружие: {', '.join(character['equipment']['weapons']['items'])}\n"
+        if character['equipment']['armor']['items']:
+            context += f"- Броня: {', '.join(character['equipment']['armor']['items'])}\n"
+        
+        # Add spells if character has them
+        if character['magic']['spells_known']['cantrips'] or character['magic']['spells_known']['spells']:
+            context += "\nЗаклинания:\n"
+            if character['magic']['spells_known']['cantrips']:
+                context += f"- Заговоры: {', '.join(character['magic']['spells_known']['cantrips'])}\n"
+            if character['magic']['spells_known']['spells']:
+                context += f"- Известные заклинания: {', '.join(character['magic']['spells_known']['spells'])}\n"
+        
+        return context
+
+    def _format_group_context(self, chat_id: int) -> str:
+        """Format group information into a context string for the AI"""
+        members = self.group_service.get_members(chat_id)
+        if not members:
+            return ""
+            
+        context = "\n👥 Состав группы:\n"
+        for member in members:
+            char_data = member.character_data
+            context += f"\n{self._format_character_context(char_data)}"
+        return context
 
     def get_chat_history(self, user_id: int) -> ChatHistory:
         if user_id not in self.chats:
@@ -72,9 +125,28 @@ class HistoryService:
         history = self.get_chat_history(user_id)
         history.add_message("assistant", content)
 
-    def get_messages_for_api(self, user_id: int) -> List[dict]:
+    def get_messages_for_api(self, user_id: int, chat_id: int = None) -> List[dict]:
         history = self.get_chat_history(user_id)
-        return [{"role": "system", "content": MAIN_PROMT}] + history.get_messages()
+        
+        # Формируем единое system-сообщение
+        system_content = MAIN_PROMT
+        
+        # Добавляем саммари, если есть
+        if history.summary:
+            system_content += f"\n\nПредыдущий контекст диалога: {history.summary}"
+            
+        # Если это групповой чат, добавляем информацию о группе
+        if chat_id:
+            group_context = self._format_group_context(chat_id)
+            if group_context:
+                system_content += group_context
+        # Иначе добавляем информацию об активном персонаже
+        else:
+            active_character = self.character_service.get_active_character(user_id)
+            if active_character:
+                system_content += f"\n\n{self._format_character_context(active_character)}"
+            
+        return [{"role": "system", "content": system_content}] + history.get_messages()
 
     def clear_history(self, user_id: int):
         if user_id in self.chats:
