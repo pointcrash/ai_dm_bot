@@ -64,12 +64,9 @@ class OpenAIService:
         if active_character:
             character_context = {
                 "role": "system",
-                "content": "Вы - мастер подземелий (Dungeon Master) в игре D&D. "
-                          "Вы управляете игровым миром и взаимодействуете с игроками. "
-                          "Вот информация о персонаже, с которым вы общаетесь:\n\n" +
-                          self._format_character_context(active_character)
+                "content": self._format_character_context(active_character)
             }
-            messages.insert(1, character_context)
+            messages.insert(len(messages)-1, character_context)
         
         # Логируем запрос
         self.logger_service.log_request(user_id, messages)
