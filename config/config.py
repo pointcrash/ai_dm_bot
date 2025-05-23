@@ -1,6 +1,6 @@
 import os
 from dotenv import load_dotenv
-from config.adventure_promt import RUSSIAN_ADVENTURE_PROMT
+from config.adventure_promt import EASY_ADVENTURE_PROMT
 
 # Загружаем переменные окружения
 load_dotenv()
@@ -16,4 +16,4 @@ SUMMARY_OPENAI_MODEL = "gpt-4o-mini"
 SUMMARY_OPENAI_TEMPERATURE = 0.3
 
 MAX_HISTORY_LENGTH = 20
-MAIN_PROMT = RUSSIAN_ADVENTURE_PROMT
+MAIN_PROMT = EASY_ADVENTURE_PROMT

@@ -65,7 +65,7 @@ class HistoryService:
 
     def _format_character_context(self, character: dict) -> str:
         """Format character information into a context string for the AI"""
-        context = f"Персонаж по имени {character['name']}, "
+        context = f"Персонаж пользователя с id {character['user_id']} по имени {character['name']}, "
         context += f"{character['race']} {character['class_name']} {character['level']} уровня. "
         
         # Add character description if available

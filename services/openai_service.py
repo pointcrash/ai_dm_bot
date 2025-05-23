@@ -14,6 +14,8 @@ class OpenAIService:
         self.character_service = CharacterService()
 
     async def get_response(self, user_id: int, user_message: str, chat_id: int = None) -> str:
+        user_message += f"\n\nUser ID: {str(user_id)}"
+
         # Добавляем сообщение пользователя в историю
         self.history_service.add_user_message(user_id, user_message)
         
