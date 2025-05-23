@@ -117,7 +117,7 @@ async def cmd_join_group(message: Message):
         await message.answer("❌ У вас нет активного персонажа. Сначала создайте и активируйте персонажа.")
         return
         
-    if group_service.add_member(message.chat.id, message.from_user.id, active_character['name']):
+    if group_service.add_member(message.chat.id, message.from_user.id, active_character):
         await message.answer(f"✅ {active_character['name']} присоединился к группе!")
     else:
         await message.answer(f"❌ {active_character['name']} уже состоит в группе.")

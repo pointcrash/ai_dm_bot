@@ -1,12 +1,33 @@
-from typing import Dict, List, Optional
-from dataclasses import dataclass, field
+from typing import Dict, List, Optional, Any
+from dataclasses import dataclass, field, asdict
 from datetime import datetime
+import json
+import os
+from pathlib import Path
 
 @dataclass
 class GroupMember:
     user_id: int
     character_name: str
+    character_data: Dict[str, Any]  # Полные данные персонажа
     joined_at: datetime = field(default_factory=datetime.now)
+
+    def to_dict(self):
+        return {
+            'user_id': self.user_id,
+            'character_name': self.character_name,
+            'character_data': self.character_data,
+            'joined_at': self.joined_at.isoformat()
+        }
+
+    @classmethod
+    def from_dict(cls, data: dict):
+        return cls(
+            user_id=data['user_id'],
+            character_name=data['character_name'],
+            character_data=data['character_data'],
+            joined_at=datetime.fromisoformat(data['joined_at'])
+        )
 
 @dataclass
 class Group:
@@ -14,24 +35,78 @@ class Group:
     created_at: datetime = field(default_factory=datetime.now)
     updated_at: datetime = field(default_factory=datetime.now)
 
+    def to_dict(self):
+        return {
+            'members': [member.to_dict() for member in self.members],
+            'created_at': self.created_at.isoformat(),
+            'updated_at': self.updated_at.isoformat()
+        }
+
+    @classmethod
+    def from_dict(cls, data: dict):
+        return cls(
+            members=[GroupMember.from_dict(member_data) for member_data in data['members']],
+            created_at=datetime.fromisoformat(data['created_at']),
+            updated_at=datetime.fromisoformat(data['updated_at'])
+        )
+
 class GroupService:
-    def __init__(self):
+    def __init__(self, groups_dir: str = "data/groups"):
+        self.groups_dir = Path(groups_dir)
         self.groups: Dict[int, Group] = {}  # chat_id -> Group
+        self._ensure_groups_dir()
+        self._load_groups()
+
+    def _ensure_groups_dir(self):
+        """Создает директорию для хранения групп, если она не существует"""
+        self.groups_dir.mkdir(parents=True, exist_ok=True)
+
+    def _get_group_file_path(self, chat_id: int) -> Path:
+        """Возвращает путь к файлу группы"""
+        return self.groups_dir / f"group_{chat_id}.json"
+
+    def _load_groups(self):
+        """Загружает все сохраненные группы"""
+        for group_file in self.groups_dir.glob("group_*.json"):
+            try:
+                chat_id = int(group_file.stem.split('_')[1])
+                with open(group_file, 'r', encoding='utf-8') as f:
+                    group_data = json.load(f)
+                    self.groups[chat_id] = Group.from_dict(group_data)
+            except (json.JSONDecodeError, IOError, ValueError) as e:
+                print(f"Ошибка при загрузке группы из файла {group_file}: {e}")
+
+    def _save_group(self, chat_id: int):
+        """Сохраняет группу в файл"""
+        group = self.groups.get(chat_id)
+        if group:
+            try:
+                with open(self._get_group_file_path(chat_id), 'w', encoding='utf-8') as f:
+                    json.dump(group.to_dict(), f, ensure_ascii=False, indent=2)
+            except IOError as e:
+                print(f"Ошибка при сохранении группы {chat_id}: {e}")
 
     def get_group(self, chat_id: int) -> Group:
         if chat_id not in self.groups:
             self.groups[chat_id] = Group()
+            self._save_group(chat_id)
         return self.groups[chat_id]
 
-    def add_member(self, chat_id: int, user_id: int, character_name: str) -> bool:
+    def add_member(self, chat_id: int, user_id: int, character_data: Dict[str, Any]) -> bool:
         group = self.get_group(chat_id)
+        character_name = character_data['name']
         
         # Проверяем, не состоит ли уже персонаж в группе
         if any(member.character_name == character_name for member in group.members):
             return False
             
-        group.members.append(GroupMember(user_id=user_id, character_name=character_name))
+        group.members.append(GroupMember(
+            user_id=user_id,
+            character_name=character_name,
+            character_data=character_data
+        ))
         group.updated_at = datetime.now()
+        self._save_group(chat_id)
         return True
 
     def remove_member(self, chat_id: int, character_name: str) -> bool:
@@ -42,6 +117,7 @@ class GroupService:
             if member.character_name == character_name:
                 group.members.pop(i)
                 group.updated_at = datetime.now()
+                self._save_group(chat_id)
                 return True
         return False
 
@@ -56,5 +132,6 @@ class GroupService:
             
         formatted = "👥 Состав группы:\n\n"
         for member in members:
-            formatted += f"• {member.character_name}\n"
+            char_data = member.character_data
+            formatted += f"• {char_data['name']} ({char_data['race']} {char_data['class_name']} {char_data['level']} уровня)\n"
         return formatted 
