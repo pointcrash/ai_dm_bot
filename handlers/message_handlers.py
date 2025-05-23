@@ -81,7 +81,12 @@ async def handle_message(message: Message):
 
 async def cmd_history(message: Message):
     history = openai_service.history_service.get_formatted_history(message.from_user.id)
-    await message.answer(history)
+    
+    # Разбиваем историю на части по 4000 символов
+    chunk_size = 4000
+    for i in range(0, len(history), chunk_size):
+        chunk = history[i:i + chunk_size]
+        await message.answer(chunk)
 
 async def cmd_clear_history(message: Message):
     openai_service.history_service.clear_history(message.from_user.id)
