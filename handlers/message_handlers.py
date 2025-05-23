@@ -80,7 +80,8 @@ async def handle_message(message: Message):
         await message.answer(f"Произошла ошибка: {str(e)}")
 
 async def cmd_history(message: Message):
-    history = openai_service.history_service.get_formatted_history(message.from_user.id)
+    chat_id = message.chat.id
+    history = openai_service.history_service.get_formatted_history(chat_id)
     
     # Разбиваем историю на части по 4000 символов
     chunk_size = 4000
@@ -89,13 +90,15 @@ async def cmd_history(message: Message):
         await message.answer(chunk)
 
 async def cmd_clear_history(message: Message):
-    openai_service.history_service.clear_history(message.from_user.id)
+    chat_id = message.chat.id
+    openai_service.history_service.clear_history(chat_id)
     await message.answer(CLEAR_HISTORY_MESSAGE)
 
 async def cmd_create_summary(message: Message):
     try:
+        chat_id = message.chat.id
         # Получаем историю чата
-        history = openai_service.history_service.get_chat_history(message.from_user.id)
+        history = openai_service.history_service.get_chat_history(chat_id)
         
         if not history.messages:
             await message.answer("История диалога пуста, нечего обобщать.")

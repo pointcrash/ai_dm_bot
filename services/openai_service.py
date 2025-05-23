@@ -14,13 +14,17 @@ class OpenAIService:
         self.character_service = CharacterService()
 
     async def get_response(self, user_id: int, user_message: str, chat_id: int = None) -> str:
+        # Если chat_id не указан, используем user_id как chat_id для личных сообщений
+        if chat_id is None:
+            chat_id = user_id
+
         user_message += f"\n\nUser ID: {str(user_id)}"
 
         # Добавляем сообщение пользователя в историю
-        self.history_service.add_user_message(user_id, user_message)
+        self.history_service.add_user_message(chat_id, user_message)
         
         # Получаем историю диалога
-        messages = self.history_service.get_messages_for_api(user_id, chat_id)
+        messages = self.history_service.get_messages_for_api(chat_id)
         
         # Логируем запрос
         self.logger_service.log_request(user_id, messages)
@@ -34,6 +38,6 @@ class OpenAIService:
         
         # Сохраняем ответ ассистента в историю
         assistant_response = response.choices[0].message.content
-        self.history_service.add_assistant_message(user_id, assistant_response)
+        self.history_service.add_assistant_message(chat_id, assistant_response)
         
         return assistant_response 

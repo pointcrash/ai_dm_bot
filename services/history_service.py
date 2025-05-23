@@ -56,7 +56,7 @@ class ChatHistory:
 
 class HistoryService:
     def __init__(self):
-        self.chats: Dict[int, ChatHistory] = {}
+        self.chats: Dict[int, ChatHistory] = {}  # chat_id -> ChatHistory
         self.character_service = CharacterService()
         self.group_service = GroupService()
 
@@ -109,21 +109,21 @@ class HistoryService:
             context += f"\n{self._format_character_context(char_data)}"
         return context
 
-    def get_chat_history(self, user_id: int) -> ChatHistory:
-        if user_id not in self.chats:
-            self.chats[user_id] = ChatHistory()
-        return self.chats[user_id]
+    def get_chat_history(self, chat_id: int) -> ChatHistory:
+        if chat_id not in self.chats:
+            self.chats[chat_id] = ChatHistory()
+        return self.chats[chat_id]
 
-    def add_user_message(self, user_id: int, content: str):
-        history = self.get_chat_history(user_id)
+    def add_user_message(self, chat_id: int, content: str):
+        history = self.get_chat_history(chat_id)
         history.add_message("user", content)
 
-    def add_assistant_message(self, user_id: int, content: str):
-        history = self.get_chat_history(user_id)
+    def add_assistant_message(self, chat_id: int, content: str):
+        history = self.get_chat_history(chat_id)
         history.add_message("assistant", content)
 
-    def get_messages_for_api(self, user_id: int, chat_id: int = None) -> List[dict]:
-        history = self.get_chat_history(user_id)
+    def get_messages_for_api(self, chat_id: int) -> List[dict]:
+        history = self.get_chat_history(chat_id)
         
         # Формируем единое system-сообщение
         system_content = MAIN_PROMT
@@ -132,23 +132,17 @@ class HistoryService:
         if history.summary:
             system_content += f"\n\nПредыдущий контекст диалога: {history.summary}"
             
-        # Если это групповой чат, добавляем информацию о группе
-        if chat_id:
-            group_context = self._format_group_context(chat_id)
-            if group_context:
-                system_content += group_context
-        # Иначе добавляем информацию об активном персонаже
-        else:
-            active_character = self.character_service.get_active_character(user_id)
-            if active_character:
-                system_content += f"\n\n{self._format_character_context(active_character)}"
+        # Добавляем информацию о группе
+        group_context = self._format_group_context(chat_id)
+        if group_context:
+            system_content += group_context
             
         return [{"role": "system", "content": system_content}] + history.get_messages()
 
-    def clear_history(self, user_id: int):
-        if user_id in self.chats:
-            self.chats[user_id].clear()
+    def clear_history(self, chat_id: int):
+        if chat_id in self.chats:
+            self.chats[chat_id].clear()
 
-    def get_formatted_history(self, user_id: int) -> str:
-        history = self.get_chat_history(user_id)
+    def get_formatted_history(self, chat_id: int) -> str:
+        history = self.get_chat_history(chat_id)
         return history.get_formatted_history() 
