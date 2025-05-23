@@ -106,7 +106,7 @@ async def cmd_create_summary(message: Message):
 
 async def cmd_group_members(message: Message):
     """Показать текущий состав группы"""
-    members = group_service.get_formatted_members(message.from_user.id)
+    members = group_service.get_formatted_members(message.chat.id)
     await message.answer(members)
 
 async def cmd_join_group(message: Message):
@@ -117,7 +117,7 @@ async def cmd_join_group(message: Message):
         await message.answer("❌ У вас нет активного персонажа. Сначала создайте и активируйте персонажа.")
         return
         
-    if group_service.add_member(message.from_user.id, active_character['name']):
+    if group_service.add_member(message.chat.id, message.from_user.id, active_character['name']):
         await message.answer(f"✅ {active_character['name']} присоединился к группе!")
     else:
         await message.answer(f"❌ {active_character['name']} уже состоит в группе.")
@@ -130,7 +130,7 @@ async def cmd_leave_group(message: Message):
         await message.answer("❌ У вас нет активного персонажа.")
         return
         
-    if group_service.remove_member(message.from_user.id, active_character['name']):
+    if group_service.remove_member(message.chat.id, active_character['name']):
         await message.answer(f"✅ {active_character['name']} покинул группу.")
     else:
         await message.answer(f"❌ {active_character['name']} не состоит в группе.")
@@ -144,7 +144,7 @@ async def cmd_remove_member(message: Message):
         return
         
     character_name = args[1]
-    if group_service.remove_member(message.from_user.id, character_name):
+    if group_service.remove_member(message.chat.id, character_name):
         await message.answer(f"✅ {character_name} удален из группы.")
     else:
         await message.answer(f"❌ Персонаж {character_name} не найден в группе.") 
