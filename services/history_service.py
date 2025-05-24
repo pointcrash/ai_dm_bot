@@ -37,9 +37,9 @@ class ChatHistory:
     summary: str = ""
 
     def add_message(self, role: str, content: str):
-        self.messages.append(Message(role=role, content=content))
-        if len(self.messages) > self.max_history:
+        if len(self.messages) >= self.max_history:
             self._create_summary()
+        self.messages.append(Message(role=role, content=content))
 
     def _create_summary(self):
         # Получаем саммари от SummaryService
