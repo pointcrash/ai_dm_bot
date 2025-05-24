@@ -1,6 +1,9 @@
 from typing import Dict, List
 from dataclasses import dataclass, field
 from datetime import datetime
+import json
+import os
+from pathlib import Path
 from config.config import MAIN_PROMT, MAX_HISTORY_LENGTH
 from services.summary_service import SummaryService
 from services.character_service import CharacterService
@@ -11,6 +14,21 @@ class Message:
     role: str
     content: str
     timestamp: datetime = field(default_factory=datetime.now)
+
+    def to_dict(self):
+        return {
+            'role': self.role,
+            'content': self.content,
+            'timestamp': self.timestamp.isoformat()
+        }
+
+    @classmethod
+    def from_dict(cls, data: dict):
+        return cls(
+            role=data['role'],
+            content=data['content'],
+            timestamp=datetime.fromisoformat(data['timestamp'])
+        )
 
 @dataclass
 class ChatHistory:
@@ -54,11 +72,56 @@ class ChatHistory:
             formatted += f"{role}: {msg.content}\n\n"
         return formatted
 
+    def to_dict(self):
+        return {
+            'messages': [msg.to_dict() for msg in self.messages],
+            'summary': self.summary
+        }
+
+    @classmethod
+    def from_dict(cls, data: dict):
+        history = cls()
+        history.messages = [Message.from_dict(msg_data) for msg_data in data['messages']]
+        history.summary = data['summary']
+        return history
+
 class HistoryService:
-    def __init__(self):
+    def __init__(self, history_dir: str = "data/history"):
+        self.history_dir = Path(history_dir)
         self.chats: Dict[int, ChatHistory] = {}  # chat_id -> ChatHistory
         self.character_service = CharacterService()
         self.group_service = GroupService()
+        self._ensure_history_dir()
+        self._load_histories()
+
+    def _ensure_history_dir(self):
+        """Создает директорию для хранения истории, если она не существует"""
+        self.history_dir.mkdir(parents=True, exist_ok=True)
+
+    def _get_history_file_path(self, chat_id: int) -> Path:
+        """Возвращает путь к файлу истории"""
+        return self.history_dir / f"chat_{chat_id}.json"
+
+    def _load_histories(self):
+        """Загружает все сохраненные истории"""
+        for history_file in self.history_dir.glob("chat_*.json"):
+            try:
+                chat_id = int(history_file.stem.split('_')[1])
+                with open(history_file, 'r', encoding='utf-8') as f:
+                    history_data = json.load(f)
+                    self.chats[chat_id] = ChatHistory.from_dict(history_data)
+            except (json.JSONDecodeError, IOError, ValueError) as e:
+                print(f"Ошибка при загрузке истории из файла {history_file}: {e}")
+
+    def _save_history(self, chat_id: int):
+        """Сохраняет историю в файл"""
+        history = self.chats.get(chat_id)
+        if history:
+            try:
+                with open(self._get_history_file_path(chat_id), 'w', encoding='utf-8') as f:
+                    json.dump(history.to_dict(), f, ensure_ascii=False, indent=2)
+            except IOError as e:
+                print(f"Ошибка при сохранении истории {chat_id}: {e}")
 
     def _format_character_context(self, character: dict) -> str:
         """Format character information into a context string for the AI"""
@@ -117,10 +180,12 @@ class HistoryService:
     def add_user_message(self, chat_id: int, content: str):
         history = self.get_chat_history(chat_id)
         history.add_message("user", content)
+        self._save_history(chat_id)
 
     def add_assistant_message(self, chat_id: int, content: str):
         history = self.get_chat_history(chat_id)
         history.add_message("assistant", content)
+        self._save_history(chat_id)
 
     def get_messages_for_api(self, chat_id: int) -> List[dict]:
         history = self.get_chat_history(chat_id)
@@ -142,6 +207,7 @@ class HistoryService:
     def clear_history(self, chat_id: int):
         if chat_id in self.chats:
             self.chats[chat_id].clear()
+            self._save_history(chat_id)
 
     def get_formatted_history(self, chat_id: int) -> str:
         history = self.get_chat_history(chat_id)
