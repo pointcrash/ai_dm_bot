@@ -6,6 +6,7 @@ from services.group_service import GroupService
 from services.character_service import CharacterService
 from config.hard_messages import START_MESSAGE, CLEAR_HISTORY_MESSAGE, HELP_MESSAGE, CAMPAIGN_MESSAGE
 from datetime import datetime
+import random
 
 # Инициализируем сервисы
 openai_service = OpenAIService()
@@ -170,4 +171,47 @@ async def cmd_remove_member(message: Message):
     if group_service.remove_member(message.chat.id, character_name):
         await message.answer(f"✅ {character_name} удален из группы.")
     else:
-        await message.answer(f"❌ Персонаж {character_name} не найден в группе.") 
+        await message.answer(f"❌ Персонаж {character_name} не найден в группе.")
+
+async def cmd_roll(message: Message):
+    """Бросок кубиков в формате /roll ndm или /roll для броска 1d20"""
+    try:
+        # Получаем аргументы команды
+        args = message.text.split()
+        
+        # Если аргументов нет, используем 1d20 по умолчанию
+        if len(args) == 1:
+            num_dice = 1
+            sides = 20
+        else:
+            # Парсим аргументы
+            dice_str = args[1].lower()
+            if 'd' not in dice_str:
+                await message.answer("❌ Неверный формат. Используйте формат: <количество>d<грани>")
+                return
+                
+            num_dice, sides = dice_str.split('d')
+            try:
+                num_dice = int(num_dice)
+                sides = int(sides)
+            except ValueError:
+                await message.answer("❌ Количество кубиков и грани должны быть числами")
+                return
+                
+            if num_dice < 1 or sides < 2:
+                await message.answer("❌ Количество кубиков должно быть больше 0, а количество граней больше 1")
+                return
+            
+        # Бросаем кубики
+        rolls = [random.randint(1, sides) for _ in range(num_dice)]
+        total = sum(rolls)
+        
+        # Формируем ответ
+        result = f"🎲 Бросок {num_dice}d{sides}:\n"
+        result += f"Результаты: {', '.join(map(str, rolls))}\n"
+        result += f"Сумма: {total}"
+        
+        await message.answer(result)
+        
+    except Exception as e:
+        await message.answer(f"❌ Произошла ошибка при броске кубиков: {str(e)}") 
