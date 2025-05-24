@@ -5,6 +5,7 @@ from services.campaign_service import CampaignService
 from services.group_service import GroupService
 from services.character_service import CharacterService
 from config.hard_messages import START_MESSAGE, CLEAR_HISTORY_MESSAGE, HELP_MESSAGE, CAMPAIGN_MESSAGE
+from datetime import datetime
 
 # Инициализируем сервисы
 openai_service = OpenAIService()
@@ -28,6 +29,16 @@ async def cmd_campaign(message: Message):
 
 async def handle_message(message: Message):
     user_id = message.from_user.id
+    
+    # Игнорируем сообщения, начинающиеся с точки
+    if message.text.startswith('.'):
+        return
+        
+    # Игнорируем сообщения старше 5 секунд
+    message_time = message.date.timestamp()
+    current_time = datetime.now().timestamp()
+    if current_time - message_time > 5:
+        return
     
     # Проверяем, находится ли пользователь в процессе настройки кампании
     if user_id in campaign_states:
