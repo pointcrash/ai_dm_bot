@@ -68,7 +68,7 @@ class ChatHistory:
         if self.summary:
             formatted += f"📝 Контекст: {self.summary}\n\n"
         for msg in self.messages:
-            role = "👤 Вы" if msg.role == "user" else "🤖 Бот"
+            role = "Вы" if msg.role == "user" else "Мастер подземелий"
             formatted += f"{role}: {msg.content}\n\n"
         return formatted
 
