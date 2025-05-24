@@ -197,7 +197,8 @@ class HistoryService:
         if history.summary:
             system_content += f"\n\nПредыдущий контекст диалога: {history.summary}"
             
-        # Добавляем информацию о группе
+        # Перезагружаем информацию о группе перед каждым запросом
+        self.group_service._load_groups()
         group_context = self._format_group_context(chat_id)
         if group_context:
             system_content += group_context
