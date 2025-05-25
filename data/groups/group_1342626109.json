@@ -2,12 +2,12 @@
   "members": [
     {
       "user_id": 1342626109,
-      "character_name": "Эскоберт",
+      "character_name": "Крейвен",
       "character_data": {
-        "name": "Эскоберт",
-        "race": "Дварф",
+        "name": "Крейвен",
+        "race": "Человек",
         "class_name": "Друид",
-        "level": 3,
+        "level": 1,
         "user_id": 1342626109,
         "abilities": {
           "strength": {
@@ -18,7 +18,7 @@
             ],
             "value": 15,
             "modifier": 2,
-            "saving_throw_proficient": true
+            "saving_throw_proficient": false
           },
           "dexterity": {
             "name": "Ловкость",
@@ -28,17 +28,17 @@
               "Ловкость рук",
               "Скрытность"
             ],
-            "value": 14,
+            "value": 15,
             "modifier": 2,
-            "saving_throw_proficient": true
+            "saving_throw_proficient": false
           },
           "constitution": {
             "name": "Телосложение",
             "description": "Здоровье, выносливость и жизненная сила",
             "skills": [],
-            "value": 13,
-            "modifier": 1,
-            "saving_throw_proficient": false
+            "value": 14,
+            "modifier": 2,
+            "saving_throw_proficient": true
           },
           "intelligence": {
             "name": "Интеллект",
@@ -50,8 +50,8 @@
               "Природа",
               "Религия"
             ],
-            "value": 12,
-            "modifier": 1,
+            "value": 10,
+            "modifier": 0,
             "saving_throw_proficient": false
           },
           "wisdom": {
@@ -66,7 +66,7 @@
             ],
             "value": 10,
             "modifier": 0,
-            "saving_throw_proficient": true
+            "saving_throw_proficient": false
           },
           "charisma": {
             "name": "Харизма",
@@ -79,21 +79,21 @@
             ],
             "value": 8,
             "modifier": -1,
-            "saving_throw_proficient": false
+            "saving_throw_proficient": true
           }
         },
         "base_stats": {
           "hit_points": {
             "name": "Хиты",
             "description": "Количество очков здоровья",
-            "maximum": 20,
-            "current": 5,
-            "temporary": 12
+            "maximum": 10,
+            "current": 10,
+            "temporary": 0
           },
           "armor_class": {
             "name": "Класс брони",
             "description": "Защита от атак",
-            "value": 12,
+            "value": 13,
             "base": 10,
             "bonus": 0
           },
@@ -107,10 +107,10 @@
             "description": "Базовая скорость передвижения",
             "base": 30,
             "current": 30,
-            "fly": 10,
-            "swim": 30,
-            "climb": 20,
-            "burrow": 1
+            "fly": 0,
+            "swim": 15,
+            "climb": 15,
+            "burrow": 0
           }
         },
         "advanced_stats": {
@@ -118,33 +118,37 @@
             "name": "Спасброски",
             "description": "Базовые спасброски по характеристикам",
             "values": {
-              "strength": 4,
-              "dexterity": 4,
-              "constitution": 1,
-              "intelligence": 1,
-              "wisdom": 2,
-              "charisma": -1
+              "strength": 2,
+              "dexterity": 2,
+              "constitution": 4,
+              "intelligence": 0,
+              "wisdom": 0,
+              "charisma": 1
             }
           },
           "skills": {
             "name": "Навыки",
             "description": "Все доступные навыки персонажа",
             "proficiencies": [
-              "Акробатика"
+              "Акробатика",
+              "Природа",
+              "Скрытность",
+              "Выживание",
+              "Атлетика"
             ],
             "expertise": [],
             "values": {
-              "Атлетика": 2,
+              "Атлетика": 4,
               "Акробатика": 4,
               "Ловкость рук": 2,
-              "Скрытность": 2,
-              "Анализ": 1,
-              "История": 1,
-              "Магия": 1,
-              "Природа": 1,
-              "Религия": 1,
+              "Скрытность": 4,
+              "Анализ": 0,
+              "История": 0,
+              "Магия": 0,
+              "Природа": 2,
+              "Религия": 0,
               "Восприятие": 0,
-              "Выживание": 0,
+              "Выживание": 2,
               "Медицина": 0,
               "Проницательность": 0,
               "Уход за животными": 0,
@@ -170,29 +174,28 @@
             "name": "Оружие",
             "description": "Вооружение персонажа",
             "items": [
-              "Меч 1к8"
+              "Деревянный посох",
+              "Веревка 10 метров"
             ]
           },
           "armor": {
             "name": "Броня",
             "description": "Защитное снаряжение",
             "items": [
-              "Кольчуга"
+              "Кожаная броня"
             ]
           },
           "items": {
             "name": "Предметы",
             "description": "Различные предметы в инвентаре",
-            "items": [
-              "Веревка"
-            ]
+            "items": []
           },
           "money": {
             "name": "Деньги",
             "description": "Валюта и ценности",
-            "copper": 1,
-            "silver": 5,
-            "gold": 0,
+            "copper": 0,
+            "silver": 10,
+            "gold": 12,
             "platinum": 0
           }
         },
@@ -201,29 +204,23 @@
             "name": "Ячейки заклинаний",
             "description": "Доступные ячейки для заклинаний",
             "values": {
-              "1": 4,
-              "2": 2,
-              "3": 1,
-              "4": 5,
+              "1": 0,
+              "2": 0,
+              "3": 0,
+              "4": 0,
               "5": 0,
               "6": 0,
               "7": 0,
               "8": 0,
-              "9": 0
+              "9": 1
             }
           },
           "spells_known": {
             "name": "Известные заклинания",
             "description": "Список известных заклинаний",
-            "cantrips": [
-              "Свет",
-              "Рут"
-            ],
+            "cantrips": [],
             "spells": [
-              "Прпрп (2 уровень)",
-              "Огненный шар (3 уровень)",
-              "Таран (4 уровень)",
-              "гнгнг (9 уровень)"
+              "Исполнение желаний (9 уровень)"
             ]
           },
           "spell_save_dc": {
@@ -237,12 +234,11 @@
             "value": 0
           }
         },
-        "description": "вапрапрапр",
         "is_active": true
       },
-      "joined_at": "2025-05-24T09:41:12.851348"
+      "joined_at": "2025-05-24T16:43:26.074885"
     }
   ],
   "created_at": "2025-05-23T20:50:22.908181",
-  "updated_at": "2025-05-24T09:41:12.851348"
+  "updated_at": "2025-05-24T16:43:26.074885"
 }

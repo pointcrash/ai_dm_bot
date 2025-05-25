@@ -31,8 +31,12 @@ async def cmd_campaign(message: Message):
 async def handle_message(message: Message):
     user_id = message.from_user.id
     
+    # Проверяем наличие текста в сообщении
+    if not message.text:
+        return
+    
     # Игнорируем сообщения, начинающиеся с точки
-    if message.text.startswith('.'):
+    if message.text.startswith('.') or message.text.startswith('/'):
         return
         
     # Игнорируем сообщения старше 5 секунд

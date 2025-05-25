@@ -18,7 +18,20 @@ class OpenAIService:
         if chat_id is None:
             chat_id = user_id
 
+        # Получаем информацию об активном персонаже пользователя
+        active_character = self.character_service.get_active_character(user_id)
+        character_info = ""
+        
+        if active_character:
+            character_info = f"\n\nИнформация о персонаже пользователя:\n"
+            character_info += f"Имя: {active_character['name']}\n"
+            character_info += f"Раса: {active_character['race']}\n"
+            character_info += f"Класс: {active_character['class_name']}\n"
+            character_info += f"Уровень: {active_character['level']}\n"
+
         user_message += f"\n\nUser ID: {str(user_id)}"
+        if character_info:
+            user_message += character_info
 
         # Добавляем сообщение пользователя в историю
         self.history_service.add_user_message(chat_id, user_message)
