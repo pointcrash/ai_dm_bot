@@ -136,6 +136,29 @@ class HistoryService:
         context += "\nОсновные характеристики персонажа:\n"
         for ability, data in character['abilities'].items():
             context += f"- {data['name']}: {data['value']} (модификатор {data['modifier']:+d})\n"
+            
+            # Add skills with proficiency bonus
+            if data['skills']:
+                context += f"  Навыки ({data['name']}):\n"
+                for skill in data['skills']:
+                    # Получаем значение навыка из advanced_stats
+                    skill_value = character['advanced_stats']['skills']['values'].get(skill, 0)
+                    proficiency = 'none'
+                    
+                    # Проверяем уровень владения навыком
+                    if skill in character['advanced_stats']['skills']['expertise']:
+                        proficiency = 'expertise'
+                    elif skill in character['advanced_stats']['skills']['proficiencies']:
+                        proficiency = 'proficient'
+                    
+                    # Формируем описание уровня владения
+                    proficiency_text = ""
+                    if proficiency == 'expertise':
+                        proficiency_text = " (Экспертиза)"
+                    elif proficiency == 'proficient':
+                        proficiency_text = " (Владение)"
+                        
+                    context += f"  - {skill}: {skill_value:+d}{proficiency_text}\n"
         
         # Add current state
         hp = character['base_stats']['hit_points']
@@ -149,6 +172,8 @@ class HistoryService:
             context += f"- Оружие: {', '.join(character['equipment']['weapons']['items'])}\n"
         if character['equipment']['armor']['items']:
             context += f"- Броня: {', '.join(character['equipment']['armor']['items'])}\n"
+        if character['equipment']['items']['items']:
+            context += f"- Предметы: {', '.join(character['equipment']['items']['items'])}\n"
         
         # Add spells if character has them
         if character['magic']['spells_known']['cantrips'] or character['magic']['spells_known']['spells']:
