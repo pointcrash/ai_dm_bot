@@ -10,7 +10,7 @@ class OpenAIService:
         self.model = MAIN_OPENAI_MODEL
         self.temperature = MAIN_OPENAI_TEMPERATURE
         self.history_service = HistoryService()
-        # self.logger_service = LoggerService()
+        self.logger_service = LoggerService()
         self.character_service = CharacterService()
 
     async def get_response(self, user_id: int, user_message: str, chat_id: int = None) -> str:
@@ -39,7 +39,7 @@ class OpenAIService:
         messages = self.history_service.get_messages_for_api(chat_id)
         
         # Логируем запрос
-        # self.logger_service.log_request(user_id, messages)
+        self.logger_service.log_request(user_id, messages)
         
         # Получаем ответ от OpenAI
         response = await self.client.chat.completions.create(

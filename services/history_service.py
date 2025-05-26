@@ -168,8 +168,11 @@ class HistoryService:
             
         context = "\n👥 Состав группы:\n"
         for member in members:
-            char_data = member.character_data
-            context += f"\n{self._format_character_context(char_data)}"
+            character_data = self.character_service.get_active_character(member.user_id)
+            if character_data:
+                context += f"\n{self._format_character_context(character_data)}"
+            else:
+                context += f"\nПерсонаж {member.character_name} (данные недоступны)"
         return context
 
     def get_chat_history(self, chat_id: int) -> ChatHistory:

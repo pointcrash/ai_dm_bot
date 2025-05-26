@@ -4,19 +4,18 @@ from datetime import datetime
 import json
 import os
 from pathlib import Path
+from services.character_service import CharacterService
 
 @dataclass
 class GroupMember:
     user_id: int
     character_name: str
-    character_data: Dict[str, Any]  # Полные данные персонажа
     joined_at: datetime = field(default_factory=datetime.now)
 
     def to_dict(self):
         return {
             'user_id': self.user_id,
             'character_name': self.character_name,
-            'character_data': self.character_data,
             'joined_at': self.joined_at.isoformat()
         }
 
@@ -25,7 +24,6 @@ class GroupMember:
         return cls(
             user_id=data['user_id'],
             character_name=data['character_name'],
-            character_data=data['character_data'],
             joined_at=datetime.fromisoformat(data['joined_at'])
         )
 
@@ -45,7 +43,7 @@ class Group:
     @classmethod
     def from_dict(cls, data: dict):
         return cls(
-            members=[GroupMember.from_dict(member_data) for member_data in data['members']],
+            members=[GroupMember.from_dict(member) for member in data['members']],
             created_at=datetime.fromisoformat(data['created_at']),
             updated_at=datetime.fromisoformat(data['updated_at'])
         )
@@ -54,6 +52,7 @@ class GroupService:
     def __init__(self, groups_dir: str = "data/groups"):
         self.groups_dir = Path(groups_dir)
         self.groups: Dict[int, Group] = {}  # chat_id -> Group
+        self.character_service = CharacterService()
         self._ensure_groups_dir()
         self._load_groups()
 
@@ -87,9 +86,9 @@ class GroupService:
                 print(f"Ошибка при сохранении группы {chat_id}: {e}")
 
     def get_group(self, chat_id: int) -> Group:
+        """Получает группу по ID чата"""
         if chat_id not in self.groups:
             self.groups[chat_id] = Group()
-            self._save_group(chat_id)
         return self.groups[chat_id]
 
     def add_member(self, chat_id: int, user_id: int, character_data: Dict[str, Any]) -> bool:
@@ -102,8 +101,7 @@ class GroupService:
             
         group.members.append(GroupMember(
             user_id=user_id,
-            character_name=character_name,
-            character_data=character_data
+            character_name=character_name
         ))
         group.updated_at = datetime.now()
         self._save_group(chat_id)
@@ -132,6 +130,9 @@ class GroupService:
             
         formatted = "👥 Состав группы:\n\n"
         for member in members:
-            char_data = member.character_data
-            formatted += f"• {char_data['name']} ({char_data['race']} {char_data['class_name']} {char_data['level']} уровня)\n"
+            character_data = self.character_service.get_active_character(member.user_id)
+            if character_data:
+                formatted += f"• {character_data['name']} ({character_data['race']} {character_data['class_name']} {character_data['level']} уровня)\n"
+            else:
+                formatted += f"• {member.character_name} (данные персонажа недоступны)\n"
         return formatted 
