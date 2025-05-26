@@ -1,476 +1,11 @@
 {
   "members": [
     {
-      "user_id": 1342626109,
-      "character_name": "Крейвен",
-      "character_data": {
-        "name": "Крейвен",
-        "race": "Человек",
-        "class_name": "Друид",
-        "level": 1,
-        "user_id": 1342626109,
-        "abilities": {
-          "strength": {
-            "name": "Сила",
-            "description": "Физическая сила и атлетические способности",
-            "skills": [
-              "Атлетика"
-            ],
-            "value": 15,
-            "modifier": 2,
-            "saving_throw_proficient": false
-          },
-          "dexterity": {
-            "name": "Ловкость",
-            "description": "Координация, рефлексы и равновесие",
-            "skills": [
-              "Акробатика",
-              "Ловкость рук",
-              "Скрытность"
-            ],
-            "value": 15,
-            "modifier": 2,
-            "saving_throw_proficient": false
-          },
-          "constitution": {
-            "name": "Телосложение",
-            "description": "Здоровье, выносливость и жизненная сила",
-            "skills": [],
-            "value": 14,
-            "modifier": 2,
-            "saving_throw_proficient": true
-          },
-          "intelligence": {
-            "name": "Интеллект",
-            "description": "Умственные способности, память и логика",
-            "skills": [
-              "Анализ",
-              "История",
-              "Магия",
-              "Природа",
-              "Религия"
-            ],
-            "value": 10,
-            "modifier": 0,
-            "saving_throw_proficient": false
-          },
-          "wisdom": {
-            "name": "Мудрость",
-            "description": "Восприятие, интуиция и проницательность",
-            "skills": [
-              "Восприятие",
-              "Выживание",
-              "Медицина",
-              "Проницательность",
-              "Уход за животными"
-            ],
-            "value": 10,
-            "modifier": 0,
-            "saving_throw_proficient": false
-          },
-          "charisma": {
-            "name": "Харизма",
-            "description": "Сила личности, убеждение и лидерство",
-            "skills": [
-              "Запугивание",
-              "Обман",
-              "Убеждение",
-              "Выступление"
-            ],
-            "value": 8,
-            "modifier": -1,
-            "saving_throw_proficient": true
-          }
-        },
-        "base_stats": {
-          "hit_points": {
-            "name": "Хиты",
-            "description": "Количество очков здоровья",
-            "maximum": 10,
-            "current": 10,
-            "temporary": 0
-          },
-          "armor_class": {
-            "name": "Класс брони",
-            "description": "Защита от атак",
-            "value": 13,
-            "base": 10,
-            "bonus": 0
-          },
-          "proficiency_bonus": {
-            "name": "Бонус мастерства",
-            "description": "Бонус к проверкам характеристик и атакам",
-            "value": 2
-          },
-          "speed": {
-            "name": "Скорость",
-            "description": "Базовая скорость передвижения",
-            "base": 30,
-            "current": 30,
-            "fly": 0,
-            "swim": 15,
-            "climb": 15,
-            "burrow": 0
-          }
-        },
-        "advanced_stats": {
-          "saving_throws": {
-            "name": "Спасброски",
-            "description": "Базовые спасброски по характеристикам",
-            "values": {
-              "strength": 2,
-              "dexterity": 2,
-              "constitution": 4,
-              "intelligence": 0,
-              "wisdom": 0,
-              "charisma": 1
-            }
-          },
-          "skills": {
-            "name": "Навыки",
-            "description": "Все доступные навыки персонажа",
-            "proficiencies": [
-              "Акробатика",
-              "Природа",
-              "Скрытность",
-              "Выживание",
-              "Атлетика"
-            ],
-            "expertise": [],
-            "values": {
-              "Атлетика": 4,
-              "Акробатика": 4,
-              "Ловкость рук": 2,
-              "Скрытность": 4,
-              "Анализ": 0,
-              "История": 0,
-              "Магия": 0,
-              "Природа": 2,
-              "Религия": 0,
-              "Восприятие": 0,
-              "Выживание": 2,
-              "Медицина": 0,
-              "Проницательность": 0,
-              "Уход за животными": 0,
-              "Запугивание": -1,
-              "Обман": -1,
-              "Убеждение": -1,
-              "Выступление": -1
-            }
-          },
-          "resistances": {
-            "name": "Сопротивления",
-            "description": "Сопротивление к различным типам урона",
-            "values": []
-          },
-          "immunities": {
-            "name": "Иммунитеты",
-            "description": "Иммунитеты к различным эффектам",
-            "values": []
-          }
-        },
-        "equipment": {
-          "weapons": {
-            "name": "Оружие",
-            "description": "Вооружение персонажа",
-            "items": [
-              "Деревянный посох"
-            ]
-          },
-          "armor": {
-            "name": "Броня",
-            "description": "Защитное снаряжение",
-            "items": [
-              "Кожаная броня"
-            ]
-          },
-          "items": {
-            "name": "Предметы",
-            "description": "Различные предметы в инвентаре",
-            "items": []
-          },
-          "money": {
-            "name": "Деньги",
-            "description": "Валюта и ценности",
-            "copper": 0,
-            "silver": 10,
-            "gold": 12,
-            "platinum": 0
-          }
-        },
-        "magic": {
-          "spell_slots": {
-            "name": "Ячейки заклинаний",
-            "description": "Доступные ячейки для заклинаний",
-            "values": {
-              "1": 0,
-              "2": 0,
-              "3": 0,
-              "4": 0,
-              "5": 0,
-              "6": 0,
-              "7": 0,
-              "8": 0,
-              "9": 0
-            }
-          },
-          "spells_known": {
-            "name": "Известные заклинания",
-            "description": "Список известных заклинаний",
-            "cantrips": [],
-            "spells": []
-          },
-          "spell_save_dc": {
-            "name": "Сложность спасброска",
-            "description": "Сложность спасброска от заклинаний",
-            "value": 0
-          },
-          "spell_attack_bonus": {
-            "name": "Бонус к атаке заклинаниями",
-            "description": "Бонус к броскам атаки заклинаниями",
-            "value": 0
-          }
-        },
-        "is_active": true
-      },
-      "joined_at": "2025-05-24T13:48:52.839857"
-    },
-    {
-      "user_id": 201438480,
-      "character_name": "Айка",
-      "character_data": {
-        "name": "Айка",
-        "race": "Человек",
-        "class_name": "Монах",
-        "level": 1,
-        "user_id": 201438480,
-        "abilities": {
-          "strength": {
-            "name": "Сила",
-            "description": "Физическая сила и атлетические способности",
-            "skills": [
-              "Атлетика"
-            ],
-            "value": 16,
-            "modifier": 3,
-            "saving_throw_proficient": false
-          },
-          "dexterity": {
-            "name": "Ловкость",
-            "description": "Координация, рефлексы и равновесие",
-            "skills": [
-              "Акробатика",
-              "Ловкость рук",
-              "Скрытность"
-            ],
-            "value": 17,
-            "modifier": 3,
-            "saving_throw_proficient": false
-          },
-          "constitution": {
-            "name": "Телосложение",
-            "description": "Здоровье, выносливость и жизненная сила",
-            "skills": [],
-            "value": 11,
-            "modifier": 0,
-            "saving_throw_proficient": false
-          },
-          "intelligence": {
-            "name": "Интеллект",
-            "description": "Умственные способности, память и логика",
-            "skills": [
-              "Анализ",
-              "История",
-              "Магия",
-              "Природа",
-              "Религия"
-            ],
-            "value": 3,
-            "modifier": -4,
-            "saving_throw_proficient": false
-          },
-          "wisdom": {
-            "name": "Мудрость",
-            "description": "Восприятие, интуиция и проницательность",
-            "skills": [
-              "Восприятие",
-              "Выживание",
-              "Медицина",
-              "Проницательность",
-              "Уход за животными"
-            ],
-            "value": 17,
-            "modifier": 3,
-            "saving_throw_proficient": false
-          },
-          "charisma": {
-            "name": "Харизма",
-            "description": "Сила личности, убеждение и лидерство",
-            "skills": [
-              "Запугивание",
-              "Обман",
-              "Убеждение",
-              "Выступление"
-            ],
-            "value": 8,
-            "modifier": -1,
-            "saving_throw_proficient": false
-          }
-        },
-        "base_stats": {
-          "hit_points": {
-            "name": "Хиты",
-            "description": "Количество очков здоровья",
-            "maximum": 8,
-            "current": 8,
-            "temporary": 0
-          },
-          "armor_class": {
-            "name": "Класс брони",
-            "description": "Защита от атак",
-            "value": 10,
-            "base": 10,
-            "bonus": 0
-          },
-          "proficiency_bonus": {
-            "name": "Бонус мастерства",
-            "description": "Бонус к проверкам характеристик и атакам",
-            "value": 2
-          },
-          "speed": {
-            "name": "Скорость",
-            "description": "Базовая скорость передвижения",
-            "base": 30,
-            "current": 30,
-            "fly": 0,
-            "swim": 0,
-            "climb": 0,
-            "burrow": 0
-          }
-        },
-        "advanced_stats": {
-          "saving_throws": {
-            "name": "Спасброски",
-            "description": "Базовые спасброски по характеристикам",
-            "values": {
-              "strength": 3,
-              "dexterity": 3,
-              "constitution": 0,
-              "intelligence": -4,
-              "wisdom": 3,
-              "charisma": -1
-            }
-          },
-          "skills": {
-            "name": "Навыки",
-            "description": "Все доступные навыки персонажа",
-            "proficiencies": [],
-            "expertise": [],
-            "values": {
-              "Атлетика": 3,
-              "Акробатика": 3,
-              "Ловкость рук": 3,
-              "Скрытность": 3,
-              "Анализ": -4,
-              "История": -4,
-              "Магия": -4,
-              "Природа": -4,
-              "Религия": -4,
-              "Восприятие": 3,
-              "Выживание": 3,
-              "Медицина": 3,
-              "Проницательность": 3,
-              "Уход за животными": 3,
-              "Запугивание": -1,
-              "Обман": -1,
-              "Убеждение": -1,
-              "Выступление": -1
-            }
-          },
-          "resistances": {
-            "name": "Сопротивления",
-            "description": "Сопротивление к различным типам урона",
-            "values": []
-          },
-          "immunities": {
-            "name": "Иммунитеты",
-            "description": "Иммунитеты к различным эффектам",
-            "values": []
-          }
-        },
-        "equipment": {
-          "weapons": {
-            "name": "Оружие",
-            "description": "Вооружение персонажа",
-            "items": [
-              "Боевой посох",
-              "10 дротиков"
-            ]
-          },
-          "armor": {
-            "name": "Броня",
-            "description": "Защитное снаряжение",
-            "items": []
-          },
-          "items": {
-            "name": "Предметы",
-            "description": "Различные предметы в инвентаре",
-            "items": [
-              "Набор путешественника"
-            ]
-          },
-          "money": {
-            "name": "Деньги",
-            "description": "Валюта и ценности",
-            "copper": 0,
-            "silver": 0,
-            "gold": 0,
-            "platinum": 0
-          }
-        },
-        "magic": {
-          "spell_slots": {
-            "name": "Ячейки заклинаний",
-            "description": "Доступные ячейки для заклинаний",
-            "values": {
-              "1": 0,
-              "2": 0,
-              "3": 0,
-              "4": 0,
-              "5": 0,
-              "6": 0,
-              "7": 0,
-              "8": 0,
-              "9": 0
-            }
-          },
-          "spells_known": {
-            "name": "Известные заклинания",
-            "description": "Список известных заклинаний",
-            "cantrips": [],
-            "spells": []
-          },
-          "spell_save_dc": {
-            "name": "Сложность спасброска",
-            "description": "Сложность спасброска от заклинаний",
-            "value": 0
-          },
-          "spell_attack_bonus": {
-            "name": "Бонус к атаке заклинаниями",
-            "description": "Бонус к броскам атаки заклинаниями",
-            "value": 0
-          }
-        },
-        "is_active": true
-      },
-      "joined_at": "2025-05-24T14:11:41.357821"
-    },
-    {
       "user_id": 1108519193,
-      "character_name": "Захар",
+      "character_name": "Рахаз",
       "character_data": {
-        "name": "Захар",
-        "race": "Человек",
+        "name": "Рахаз",
+        "race": "Полуорк",
         "class_name": "Варвар",
         "level": 1,
         "user_id": 1108519193,
@@ -483,7 +18,7 @@
             ],
             "value": 15,
             "modifier": 2,
-            "saving_throw_proficient": false
+            "saving_throw_proficient": true
           },
           "dexterity": {
             "name": "Ловкость",
@@ -503,7 +38,7 @@
             "skills": [],
             "value": 14,
             "modifier": 2,
-            "saving_throw_proficient": false
+            "saving_throw_proficient": true
           },
           "intelligence": {
             "name": "Интеллект",
@@ -583,9 +118,9 @@
             "name": "Спасброски",
             "description": "Базовые спасброски по характеристикам",
             "values": {
-              "strength": 2,
+              "strength": 4,
               "dexterity": 1,
-              "constitution": 2,
+              "constitution": 4,
               "intelligence": 0,
               "wisdom": 1,
               "charisma": -1
@@ -595,16 +130,14 @@
             "name": "Навыки",
             "description": "Все доступные навыки персонажа",
             "proficiencies": [
-              "Запугивание",
-              "Акробатика",
-              "Атлетика",
-              "Выживание",
               "Проницательность",
+              "Акробатика",
+              "Запугивание",
               "Медицина"
             ],
             "expertise": [],
             "values": {
-              "Атлетика": 4,
+              "Атлетика": 2,
               "Акробатика": 3,
               "Ловкость рук": 1,
               "Скрытность": 1,
@@ -614,7 +147,7 @@
               "Природа": 0,
               "Религия": 0,
               "Восприятие": 1,
-              "Выживание": 3,
+              "Выживание": 1,
               "Медицина": 3,
               "Проницательность": 3,
               "Уход за животными": 1,
@@ -639,9 +172,7 @@
           "weapons": {
             "name": "Оружие",
             "description": "Вооружение персонажа",
-            "items": [
-              "Кокосовые кастеты"
-            ]
+            "items": []
           },
           "armor": {
             "name": "Броня",
@@ -651,9 +182,7 @@
           "items": {
             "name": "Предметы",
             "description": "Различные предметы в инвентаре",
-            "items": [
-              "Кокос 3 штуки"
-            ]
+            "items": []
           },
           "money": {
             "name": "Деньги",
@@ -697,11 +226,258 @@
             "value": 0
           }
         },
+        "is_active": true,
+        "description": "В прошлом разнорабочий гастарбайтер. Обладает чертой происхождения \"Драчун\" \"Brawler\""
+      },
+      "joined_at": "2025-05-25T20:26:01.537396"
+    },
+    {
+      "user_id": 1342626109,
+      "character_name": "Крейвен",
+      "character_data": {
+        "name": "Крейвен",
+        "race": "Человек",
+        "class_name": "Друид",
+        "level": 1,
+        "user_id": 1342626109,
+        "abilities": {
+          "strength": {
+            "name": "Сила",
+            "description": "Физическая сила и атлетические способности",
+            "skills": [
+              "Атлетика"
+            ],
+            "value": 15,
+            "modifier": 2,
+            "saving_throw_proficient": false
+          },
+          "dexterity": {
+            "name": "Ловкость",
+            "description": "Координация, рефлексы и равновесие",
+            "skills": [
+              "Акробатика",
+              "Ловкость рук",
+              "Скрытность"
+            ],
+            "value": 15,
+            "modifier": 2,
+            "saving_throw_proficient": false
+          },
+          "constitution": {
+            "name": "Телосложение",
+            "description": "Здоровье, выносливость и жизненная сила",
+            "skills": [],
+            "value": 14,
+            "modifier": 2,
+            "saving_throw_proficient": false
+          },
+          "intelligence": {
+            "name": "Интеллект",
+            "description": "Умственные способности, память и логика",
+            "skills": [
+              "Анализ",
+              "История",
+              "Магия",
+              "Природа",
+              "Религия"
+            ],
+            "value": 10,
+            "modifier": 0,
+            "saving_throw_proficient": true
+          },
+          "wisdom": {
+            "name": "Мудрость",
+            "description": "Восприятие, интуиция и проницательность",
+            "skills": [
+              "Восприятие",
+              "Выживание",
+              "Медицина",
+              "Проницательность",
+              "Уход за животными"
+            ],
+            "value": 10,
+            "modifier": 0,
+            "saving_throw_proficient": true
+          },
+          "charisma": {
+            "name": "Харизма",
+            "description": "Сила личности, убеждение и лидерство",
+            "skills": [
+              "Запугивание",
+              "Обман",
+              "Убеждение",
+              "Выступление"
+            ],
+            "value": 8,
+            "modifier": -1,
+            "saving_throw_proficient": false
+          }
+        },
+        "base_stats": {
+          "hit_points": {
+            "name": "Хиты",
+            "description": "Количество очков здоровья",
+            "maximum": 10,
+            "current": 10,
+            "temporary": 0
+          },
+          "armor_class": {
+            "name": "Класс брони",
+            "description": "Защита от атак",
+            "value": 13,
+            "base": 10,
+            "bonus": 0
+          },
+          "proficiency_bonus": {
+            "name": "Бонус мастерства",
+            "description": "Бонус к проверкам характеристик и атакам",
+            "value": 2
+          },
+          "speed": {
+            "name": "Скорость",
+            "description": "Базовая скорость передвижения",
+            "base": 30,
+            "current": 30,
+            "fly": 0,
+            "swim": 15,
+            "climb": 15,
+            "burrow": 0
+          }
+        },
+        "advanced_stats": {
+          "saving_throws": {
+            "name": "Спасброски",
+            "description": "Базовые спасброски по характеристикам",
+            "values": {
+              "strength": 2,
+              "dexterity": 2,
+              "constitution": 2,
+              "intelligence": 2,
+              "wisdom": 2,
+              "charisma": -1
+            }
+          },
+          "skills": {
+            "name": "Навыки",
+            "description": "Все доступные навыки персонажа",
+            "proficiencies": [
+              "Выживание",
+              "Восприятие",
+              "Уход за животными",
+              "Природа",
+              "История"
+            ],
+            "expertise": [],
+            "values": {
+              "Атлетика": 2,
+              "Акробатика": 2,
+              "Ловкость рук": 2,
+              "Скрытность": 2,
+              "Анализ": 0,
+              "История": 2,
+              "Магия": 0,
+              "Природа": 2,
+              "Религия": 0,
+              "Восприятие": 2,
+              "Выживание": 2,
+              "Медицина": 0,
+              "Проницательность": 0,
+              "Уход за животными": 2,
+              "Запугивание": -1,
+              "Обман": -1,
+              "Убеждение": -1,
+              "Выступление": -1
+            }
+          },
+          "resistances": {
+            "name": "Сопротивления",
+            "description": "Сопротивление к различным типам урона",
+            "values": []
+          },
+          "immunities": {
+            "name": "Иммунитеты",
+            "description": "Иммунитеты к различным эффектам",
+            "values": []
+          }
+        },
+        "equipment": {
+          "weapons": {
+            "name": "Оружие",
+            "description": "Вооружение персонажа",
+            "items": [
+              "Метательное копье 1к6"
+            ]
+          },
+          "armor": {
+            "name": "Броня",
+            "description": "Защитное снаряжение",
+            "items": [
+              "Кожаная броня",
+              "Щит"
+            ]
+          },
+          "items": {
+            "name": "Предметы",
+            "description": "Различные предметы в инвентаре",
+            "items": [
+              "Веревка 10м",
+              "Фокусировка друида",
+              "Набор путешественника",
+              "Масло для фонаря"
+            ]
+          },
+          "money": {
+            "name": "Деньги",
+            "description": "Валюта и ценности",
+            "copper": 0,
+            "silver": 10,
+            "gold": 12,
+            "platinum": 0
+          }
+        },
+        "magic": {
+          "spell_slots": {
+            "name": "Ячейки заклинаний",
+            "description": "Доступные ячейки для заклинаний",
+            "values": {
+              "1": 2,
+              "2": 0,
+              "3": 0,
+              "4": 0,
+              "5": 0,
+              "6": 0,
+              "7": 0,
+              "8": 0,
+              "9": 0
+            }
+          },
+          "spells_known": {
+            "name": "Известные заклинания",
+            "description": "Список известных заклинаний",
+            "cantrips": [
+              "Первобытная дикость [Primal savagery]",
+              "Искусство друидов [Druidcraft]"
+            ],
+            "spells": [
+              "Дружба с животными [Animal friendship] (1 уровень)"
+            ]
+          },
+          "spell_save_dc": {
+            "name": "Сложность спасброска",
+            "description": "Сложность спасброска от заклинаний",
+            "value": 0
+          },
+          "spell_attack_bonus": {
+            "name": "Бонус к атаке заклинаниями",
+            "description": "Бонус к броскам атаки заклинаниями",
+            "value": 0
+          }
+        },
         "is_active": true
       },
-      "joined_at": "2025-05-24T14:39:18.584011"
+      "joined_at": "2025-05-25T21:21:07.399366"
     }
   ],
   "created_at": "2025-05-23T23:31:04.314651",
-  "updated_at": "2025-05-24T14:39:18.584011"
+  "updated_at": "2025-05-25T21:21:07.399366"
 }

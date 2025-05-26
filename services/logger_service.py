@@ -13,19 +13,21 @@ class LoggerService:
         self.logger = logging.getLogger("openai_requests")
         self.logger.setLevel(logging.INFO)
         
-        # Создаем файловый обработчик
-        log_file = self.logs_dir / f"openai_requests_{datetime.now().strftime('%Y%m%d')}.log"
-        file_handler = logging.FileHandler(log_file, encoding='utf-8')
-        file_handler.setLevel(logging.INFO)
-        
-        # Создаем форматтер
-        formatter = logging.Formatter('%(asctime)s - %(message)s')
-        file_handler.setFormatter(formatter)
-        
-        # Добавляем обработчик к логгеру
-        self.logger.addHandler(file_handler)
+        # Проверяем, есть ли уже обработчики
+        if not self.logger.handlers:
+            # Создаем файловый обработчик
+            log_file = self.logs_dir / f"openai_requests_{datetime.now().strftime('%Y%m%d')}.log"
+            file_handler = logging.FileHandler(log_file, encoding='utf-8')
+            file_handler.setLevel(logging.INFO)
+            
+            # Создаем форматтер
+            formatter = logging.Formatter('%(asctime)s - %(message)s')
+            file_handler.setFormatter(formatter)
+            
+            # Добавляем обработчик к логгеру
+            self.logger.addHandler(file_handler)
 
-    def log_request(self, user_id: int, messages: list):
+    def log_request(self, user_id: int, messages):
         log_data = {
             "user_id": user_id,
             "timestamp": datetime.now().isoformat(),

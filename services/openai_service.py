@@ -10,7 +10,7 @@ class OpenAIService:
         self.model = MAIN_OPENAI_MODEL
         self.temperature = MAIN_OPENAI_TEMPERATURE
         self.history_service = HistoryService()
-        self.logger_service = LoggerService()
+        # self.logger_service = LoggerService()
         self.character_service = CharacterService()
 
     async def get_response(self, user_id: int, user_message: str, chat_id: int = None) -> str:
@@ -25,22 +25,21 @@ class OpenAIService:
         if active_character:
             character_info = f"\n\nИнформация о персонаже пользователя:\n"
             character_info += f"Имя: {active_character['name']}\n"
-            character_info += f"Раса: {active_character['race']}\n"
-            character_info += f"Класс: {active_character['class_name']}\n"
-            character_info += f"Уровень: {active_character['level']}\n"
 
-        user_message += f"\n\nUser ID: {str(user_id)}"
+        result_message = f"User ID: {str(user_id)}"
         if character_info:
-            user_message += character_info
+            result_message += character_info
+
+        result_message += f"\n\nИгрок написал: {user_message}"
 
         # Добавляем сообщение пользователя в историю
-        self.history_service.add_user_message(chat_id, user_message)
+        self.history_service.add_user_message(chat_id, result_message)
         
         # Получаем историю диалога
         messages = self.history_service.get_messages_for_api(chat_id)
         
         # Логируем запрос
-        self.logger_service.log_request(user_id, messages)
+        # self.logger_service.log_request(user_id, messages)
         
         # Получаем ответ от OpenAI
         response = await self.client.chat.completions.create(
