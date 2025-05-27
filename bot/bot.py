@@ -1,6 +1,7 @@
 import asyncio
 from aiogram import Bot, Dispatcher
 from aiogram.filters import Command
+from aiogram.types import BotCommand, BotCommandScopeDefault
 from config.config import BOT_TOKEN
 from handlers.message_handlers import (
     cmd_start, cmd_help, cmd_history, 
@@ -29,7 +30,23 @@ class TelegramBot:
         self.dp.message.register(cmd_roll, Command("roll"))
         self.dp.message.register(handle_message)
 
+    async def _setup_commands(self):
+        commands = [
+            BotCommand(command="help", description="Показать список команд"),
+            BotCommand(command="history", description="Показать историю диалога"),
+            BotCommand(command="clear", description="Очистить историю диалога"),
+            BotCommand(command="create_summary", description="Создать краткое саммари"),
+            BotCommand(command="roll", description="Бросить кубики"),
+            BotCommand(command="group", description="Показать состав группы"),
+            BotCommand(command="join", description="Присоединиться к группе"),
+            BotCommand(command="leave", description="Покинуть группу"),
+            BotCommand(command="remove_member", description="Удалить участника из группы"),
+            BotCommand(command="campaign", description="Настроить кампанию")
+        ]
+        await self.bot.set_my_commands(commands, scope=BotCommandScopeDefault())
+
     async def start(self):
+        await self._setup_commands()
         await self.dp.start_polling(self.bot)
 
 def main():
