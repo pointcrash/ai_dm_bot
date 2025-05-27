@@ -3,6 +3,7 @@ from config.config import OPENAI_API_KEY, MAIN_OPENAI_MODEL, MAIN_OPENAI_TEMPERA
 from services.history_service import HistoryService
 from services.logger_service import LoggerService
 from services.character_service import CharacterService
+from services.usage_service import UsageService
 
 class OpenAIService:
     def __init__(self):
@@ -12,6 +13,7 @@ class OpenAIService:
         self.history_service = HistoryService()
         self.logger_service = LoggerService()
         self.character_service = CharacterService()
+        self.usage_service = UsageService()
 
     async def get_response(self, user_id: int, user_message: str, chat_id: int = None) -> str:
         # Если chat_id не указан, используем user_id как chat_id для личных сообщений
@@ -40,6 +42,9 @@ class OpenAIService:
         
         # Логируем запрос
         self.logger_service.log_request(user_id, messages)
+        
+        # Увеличиваем счетчик использования
+        self.usage_service.increment_usage(user_id)
         
         # Получаем ответ от OpenAI
         response = await self.client.chat.completions.create(
