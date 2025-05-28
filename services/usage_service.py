@@ -24,7 +24,9 @@ class UsageService:
         if usage_file.exists():
             try:
                 with open(usage_file, 'r', encoding='utf-8') as f:
-                    self.usage_data = json.load(f)
+                    data = json.load(f)
+                    # Преобразуем строковые ключи в целые числа
+                    self.usage_data = {int(k): v for k, v in data.items()}
             except (json.JSONDecodeError, IOError) as e:
                 print(f"Ошибка при загрузке данных об использовании: {e}")
 
@@ -38,14 +40,18 @@ class UsageService:
 
     def increment_usage(self, user_id: int):
         """Увеличивает счетчик использования для пользователя"""
+        # Инициализируем данные для пользователя, если их еще нет
         if user_id not in self.usage_data:
             self.usage_data[user_id] = {
                 "total_requests": 0,
                 "last_request": None
             }
         
+        # Увеличиваем счетчик и обновляем время последнего запроса
         self.usage_data[user_id]["total_requests"] += 1
         self.usage_data[user_id]["last_request"] = datetime.now().isoformat()
+        
+        # Сохраняем обновленные данные
         self._save_usage_data()
 
     def get_usage_stats(self, user_id: int) -> Optional[Dict]:
