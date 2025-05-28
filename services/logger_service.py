@@ -26,6 +26,9 @@ class LoggerService:
             
             # Добавляем обработчик к логгеру
             self.logger.addHandler(file_handler)
+            
+            # Отключаем вывод в терминал
+            self.logger.propagate = False
 
     def log_request(self, user_id: int, messages):
         log_data = {

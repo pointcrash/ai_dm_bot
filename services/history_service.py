@@ -8,6 +8,7 @@ from config.config import MAIN_PROMT, MAX_HISTORY_LENGTH
 from services.summary_service import SummaryService
 from services.character_service import CharacterService
 from services.group_service import GroupService
+from services.campaign_service import CampaignService
 
 @dataclass
 class Message:
@@ -91,6 +92,7 @@ class HistoryService:
         self.chats: Dict[int, ChatHistory] = {}  # chat_id -> ChatHistory
         self.character_service = CharacterService()
         self.group_service = GroupService()
+        self.campaign_service = CampaignService()
         self._ensure_history_dir()
         self._load_histories()
 
@@ -215,11 +217,14 @@ class HistoryService:
         history.add_message("assistant", content)
         self._save_history(chat_id)
 
-    def get_messages_for_api(self, chat_id: int) -> List[dict]:
-        history = self.get_chat_history(chat_id)
-        
-        # Формируем единое system-сообщение
+    def _get_system_message(self, chat_id: int, history: ChatHistory) -> dict:
+        """Формирует system-сообщение для API"""
         system_content = MAIN_PROMT
+
+        # Добавляем описание кампании, если есть
+        campaign = self.campaign_service.get_campaign(chat_id)
+        if campaign and campaign.description:
+            system_content += f"\n\nОписание текущей кампании:\n{campaign.description}"
         
         # Добавляем саммари, если есть
         if history.summary:
@@ -231,7 +236,12 @@ class HistoryService:
         if group_context:
             system_content += group_context
             
-        return [{"role": "system", "content": system_content}] + history.get_messages()
+        return {"role": "system", "content": system_content}
+
+    def get_messages_for_api(self, chat_id: int) -> List[dict]:
+        history = self.get_chat_history(chat_id)
+        system_message = self._get_system_message(chat_id, history)
+        return [system_message] + history.get_messages()
 
     def clear_history(self, chat_id: int):
         if chat_id in self.chats:

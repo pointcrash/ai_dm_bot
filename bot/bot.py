@@ -5,9 +5,9 @@ from aiogram.types import BotCommand, BotCommandScopeDefault
 from config.config import BOT_TOKEN
 from handlers.message_handlers import (
     cmd_start, cmd_help, cmd_history, 
-    cmd_clear_history, cmd_create_summary, cmd_campaign,
+    cmd_clear_history, cmd_create_summary,
     cmd_group_members, cmd_join_group, cmd_leave_group,
-    cmd_remove_member, cmd_roll, handle_message
+    cmd_remove_member, cmd_roll, cmd_campaign, cmd_delete_campaign, handle_message
 )
 
 class TelegramBot:
@@ -23,6 +23,7 @@ class TelegramBot:
         self.dp.message.register(cmd_clear_history, Command("clear"))
         self.dp.message.register(cmd_create_summary, Command("create_summary"))
         self.dp.message.register(cmd_campaign, Command("campaign"))
+        self.dp.message.register(cmd_delete_campaign, Command("delete_campaign"))
         self.dp.message.register(cmd_group_members, Command("group"))
         self.dp.message.register(cmd_join_group, Command("join"))
         self.dp.message.register(cmd_leave_group, Command("leave"))
@@ -37,11 +38,12 @@ class TelegramBot:
             BotCommand(command="clear", description="Очистить историю диалога"),
             BotCommand(command="create_summary", description="Создать краткое саммари"),
             BotCommand(command="roll", description="Бросить кубики"),
+            BotCommand(command="campaign", description="Управление описанием кампании"),
+            BotCommand(command="delete_campaign", description="Удалить описание кампании"),
             BotCommand(command="group", description="Показать состав группы"),
             BotCommand(command="join", description="Присоединиться к группе"),
             BotCommand(command="leave", description="Покинуть группу"),
-            BotCommand(command="remove_member", description="Удалить участника из группы"),
-            BotCommand(command="campaign", description="Настроить кампанию")
+            BotCommand(command="remove_member", description="Удалить участника из группы")
         ]
         await self.bot.set_my_commands(commands, scope=BotCommandScopeDefault())
 
