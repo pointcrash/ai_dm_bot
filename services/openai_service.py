@@ -20,6 +20,11 @@ class OpenAIService:
         if chat_id is None:
             chat_id = user_id
 
+        # Проверяем доступность запросов
+        can_use, remaining = self.usage_service.decrement_usage(user_id)
+        if not can_use:
+            return f"❌ У вас закончились доступные запросы к нейросети."
+
         # Получаем информацию об активном персонаже пользователя
         active_character = self.character_service.get_active_character(user_id)
         character_info = ""
@@ -42,9 +47,6 @@ class OpenAIService:
         
         # Логируем запрос
         self.logger_service.log_request(user_id, messages)
-        
-        # Увеличиваем счетчик использования
-        self.usage_service.increment_usage(user_id)
         
         # Получаем ответ от OpenAI
         response = await self.client.chat.completions.create(

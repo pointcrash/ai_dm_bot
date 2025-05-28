@@ -26,6 +26,15 @@ async def cmd_help(message: Message) -> None:
     """Обработчик команды /help"""
     await message.answer(HELP_MESSAGE)
 
+async def cmd_stats(message: Message) -> None:
+    """Показать статистику использования"""
+    try:
+        user_id = message.from_user.id
+        stats = openai_service.usage_service.get_formatted_usage_stats(user_id)
+        await message.answer(stats)
+    except Exception as e:
+        await message.answer(f"❌ Произошла ошибка при получении статистики: {str(e)}")
+
 async def cmd_campaign(message: Message) -> None:
     """Показать или изменить описание кампании"""
     chat_id = message.chat.id
@@ -69,6 +78,13 @@ async def handle_message(message: Message) -> None:
         return
 
     try:
+        # Обновляем информацию о пользователе
+        openai_service.usage_service.update_user_info(
+            user_id=user_id,
+            first_name=message.from_user.first_name,
+            username=message.from_user.username
+        )
+        
         # Отправляем "печатает..." статус
         await message.bot.send_chat_action(chat_id=chat_id, action="typing")
         
