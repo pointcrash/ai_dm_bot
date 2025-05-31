@@ -136,3 +136,8 @@ class GroupService:
             else:
                 formatted += f"• {member.character_name} (данные персонажа недоступны)\n"
         return formatted 
+
+    def is_member_in_group(self, chat_id: int, character_name: str) -> bool:
+        """Проверяет, состоит ли персонаж в группе"""
+        group = self.get_group(chat_id)
+        return any(member.character_name == character_name for member in group.members) 

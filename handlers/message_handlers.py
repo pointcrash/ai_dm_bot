@@ -67,8 +67,12 @@ async def handle_message(message: Message) -> None:
     if not message.text:
         return
     
+    # Игнорируем пересланные сообщения и ответы на сообщения
+    if message.forward_from or message.reply_to_message:
+        return
+        
     # Игнорируем сообщения, начинающиеся с точки или слеша
-    if message.text.startswith(('.', '/')):
+    if message.text.startswith(('.', '/', '!', '?')):
         return
         
     # Игнорируем сообщения старше 5 секунд
@@ -78,6 +82,17 @@ async def handle_message(message: Message) -> None:
         return
 
     try:
+        # Проверяем, есть ли у пользователя активный персонаж
+        active_character = character_service.get_active_character(user_id)
+        if not active_character:
+            await message.answer("❌ У вас нет активного персонажа. Сначала создайте и активируйте персонажа.")
+            return
+
+        # Проверяем, состоит ли персонаж в группе
+        if not group_service.is_member_in_group(chat_id, active_character['name']):
+            await message.answer(f"❌ Ваш персонаж {active_character['name']} не состоит в группе. Используйте /join чтобы присоединиться.")
+            return
+
         # Обновляем информацию о пользователе
         openai_service.usage_service.update_user_info(
             user_id=user_id,
