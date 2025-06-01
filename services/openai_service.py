@@ -5,6 +5,8 @@ from services.logger_service import LoggerService
 from services.character_service import CharacterService
 from services.usage_service import UsageService
 from services.log_token_usage_service import TokenUsageService
+from services.group_service import GroupService
+
 
 class OpenAIService:
     def __init__(self):
@@ -16,6 +18,7 @@ class OpenAIService:
         self.character_service = CharacterService()
         self.usage_service = UsageService()
         self.token_usage_service = TokenUsageService()
+        self.group_service = GroupService()
 
     async def get_response(self, user_id: int, user_message: str, chat_id: int = None) -> str:
         # Если chat_id не указан, используем user_id как chat_id для личных сообщений
@@ -23,12 +26,20 @@ class OpenAIService:
             chat_id = user_id
 
         # Проверяем доступность запросов
-        can_use, remaining = self.usage_service.decrement_usage(user_id)
+        can_use, _ = self.usage_service.decrement_usage(user_id)
         if not can_use:
             return f"❌ У вас закончились доступные запросы к нейросети."
 
         # Получаем информацию об активном персонаже пользователя
         active_character = self.character_service.get_active_character(user_id)
+
+        if not active_character:
+            return "❌ У вас нет активного персонажа. Сначала создайте и активируйте персонажа."
+
+        # Проверяем, состоит ли персонаж в группе
+        if not self.group_service.is_member_in_group(chat_id, active_character['name']):
+            return f"❌ Ваш персонаж {active_character['name']} не состоит в группе. Используйте /join чтобы присоединиться."
+
         character_info = ""
         
         if active_character:

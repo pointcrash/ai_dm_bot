@@ -82,17 +82,6 @@ async def handle_message(message: Message) -> None:
         return
 
     try:
-        # Проверяем, есть ли у пользователя активный персонаж
-        active_character = character_service.get_active_character(user_id)
-        if not active_character:
-            await message.answer("❌ У вас нет активного персонажа. Сначала создайте и активируйте персонажа.")
-            return
-
-        # Проверяем, состоит ли персонаж в группе
-        if not group_service.is_member_in_group(chat_id, active_character['name']):
-            await message.answer(f"❌ Ваш персонаж {active_character['name']} не состоит в группе. Используйте /join чтобы присоединиться.")
-            return
-
         # Обновляем информацию о пользователе
         openai_service.usage_service.update_user_info(
             user_id=user_id,
@@ -252,12 +241,29 @@ async def cmd_roll(message: Message) -> None:
         rolls = [random.randint(1, sides) for _ in range(num_dice)]
         total = sum(rolls)
         
-        # Формируем ответ
+        # Формируем результат броска
         result = f"🎲 Бросок {num_dice}d{sides}:\n"
         result += f"Результаты: {', '.join(map(str, rolls))}\n"
         result += f"Сумма: {total}"
         
+        # Отправляем результат пользователю
         await message.answer(result)
+        
+        chat_id = message.chat.id
+        user_id = message.from_user.id
+
+        # Отправляем "печатает..." статус
+        await message.bot.send_chat_action(chat_id=chat_id, action="typing")
+        
+        # Получаем ответ от OpenAI с учетом истории диалога
+        response = await openai_service.get_response(
+            user_id=user_id,
+            user_message=result,
+            chat_id=chat_id if message.chat.type != "private" else None
+        )
+        
+        # Отправляем ответ пользователю
+        await message.answer(response)
         
     except Exception as e:
         await message.answer(f"❌ Произошла ошибка при броске кубиков: {str(e)}")
