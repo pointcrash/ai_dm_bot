@@ -25,11 +25,6 @@ class OpenAIService:
         if chat_id is None:
             chat_id = user_id
 
-        # Проверяем доступность запросов
-        can_use, _ = self.usage_service.decrement_usage(user_id)
-        if not can_use:
-            return f"❌ У вас закончились доступные запросы к нейросети."
-
         # Получаем информацию об активном персонаже пользователя
         active_character = self.character_service.get_active_character(user_id)
 
@@ -39,6 +34,11 @@ class OpenAIService:
         # Проверяем, состоит ли персонаж в группе
         if not self.group_service.is_member_in_group(chat_id, active_character['name']):
             return f"❌ Ваш персонаж {active_character['name']} не состоит в группе. Используйте /join чтобы присоединиться."
+
+        # Проверяем доступность запросов
+        can_use, _ = self.usage_service.decrement_usage(user_id)
+        if not can_use:
+            return f"❌ У вас закончились доступные запросы к нейросети."
 
         character_info = ""
         
