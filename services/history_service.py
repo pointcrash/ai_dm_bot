@@ -227,7 +227,8 @@ class HistoryService:
             system_content += f"\n\nОписание текущей кампании:\n{campaign.description}"
         
         # Перезагружаем информацию о группе перед каждым запросом
-        self.group_service._load_groups()
+        # self.group_service._load_groups()
+        
         group_context = self._format_group_context(chat_id)
         if group_context:
             system_content += group_context

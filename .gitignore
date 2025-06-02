@@ -43,4 +43,5 @@ logs/
 .env.test.local
 .env.production.local
 
-*.json
+/data
+/logs

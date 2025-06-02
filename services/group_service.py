@@ -87,6 +87,7 @@ class GroupService:
 
     def get_group(self, chat_id: int) -> Group:
         """Получает группу по ID чата"""
+        self._load_groups() # загружаем группы
         if chat_id not in self.groups:
             self.groups[chat_id] = Group()
         return self.groups[chat_id]
