@@ -5,6 +5,7 @@ from services.openai_service import OpenAIService
 from services.group_service import GroupService
 from services.character_service import CharacterService
 from services.campaign_service import CampaignService
+from services.voice_service import VoiceService
 from config.hard_messages import START_MESSAGE, CLEAR_HISTORY_MESSAGE, HELP_MESSAGE
 from datetime import datetime
 import random
@@ -14,6 +15,7 @@ openai_service = OpenAIService()
 group_service = GroupService()
 character_service = CharacterService()
 campaign_service = CampaignService()
+voice_service = VoiceService()
 
 # Словарь для хранения состояния редактирования описания кампании
 campaign_edit_states = {}
@@ -63,8 +65,8 @@ async def handle_message(message: Message) -> None:
     user_id = message.from_user.id
     chat_id = message.chat.id
     
-    # Проверяем наличие текста в сообщении
-    if not message.text:
+    # Проверяем наличие текста или голосового сообщения
+    if not message.text and not message.voice:
         return
     
     # Игнорируем пересланные сообщения и ответы на сообщения
@@ -72,7 +74,7 @@ async def handle_message(message: Message) -> None:
         return
         
     # Игнорируем сообщения, начинающиеся с точки или слеша
-    if message.text.startswith(('.', '/', '!', '?')):
+    if message.text and message.text.startswith(('.', '/', '!', '?')):
         return
         
     # Игнорируем сообщения старше 5 секунд
@@ -92,10 +94,17 @@ async def handle_message(message: Message) -> None:
         # Отправляем "печатает..." статус
         await message.bot.send_chat_action(chat_id=chat_id, action="typing")
         
+        # Получаем текст сообщения (из текста или голосового сообщения)
+        user_message = message.text
+        if message.voice:
+            user_message = await voice_service.transcribe_voice(message.voice)
+            # Отправляем расшифровку голосового сообщения
+            await message.answer(f"🎤 Расшифровка: {user_message}")
+        
         # Получаем ответ от OpenAI с учетом истории диалога
         response = await openai_service.get_response(
             user_id=user_id,
-            user_message=message.text,
+            user_message=user_message,
             chat_id=chat_id if message.chat.type != "private" else None
         )
         
