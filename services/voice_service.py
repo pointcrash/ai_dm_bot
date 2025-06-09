@@ -33,4 +33,40 @@ class VoiceService:
         finally:
             # Удаляем временный файл
             if os.path.exists(temp_path):
-                os.remove(temp_path) 
+                os.remove(temp_path)
+
+    async def text_to_speech(self, text: str) -> str:
+        """
+        Преобразует текст в голосовое сообщение с помощью OpenAI TTS API
+        
+        Args:
+            text (str): Текст для преобразования в речь
+            
+        Returns:
+            str: Путь к созданному аудиофайлу
+        """
+        # Создаем временный файл для сохранения аудио
+        with tempfile.NamedTemporaryFile(suffix='.mp3', delete=False) as temp_file:
+            temp_path = temp_file.name
+            
+        try:
+            # Генерируем речь с помощью OpenAI API
+            response = self.client.audio.speech.create(
+                model="gpt-4o-mini-tts",
+                voice="ballad",
+                input=text,
+                instructions="Говори как Мэтью Мерсер - ведущий игры Подземелье и Драконы"
+            )
+            
+            # Сохраняем аудио в файл
+            with open(temp_path, 'wb') as f:
+                for chunk in response.iter_bytes():
+                    f.write(chunk)
+            
+            return temp_path
+            
+        except Exception as e:
+            # В случае ошибки удаляем временный файл
+            if os.path.exists(temp_path):
+                os.remove(temp_path)
+            raise e 

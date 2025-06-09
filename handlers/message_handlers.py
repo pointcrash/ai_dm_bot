@@ -1,6 +1,7 @@
 from typing import Optional
 from aiogram.types import Message
 from aiogram.filters import Command
+from aiogram.types import FSInputFile
 from services.openai_service import OpenAIService
 from services.group_service import GroupService
 from services.character_service import CharacterService
@@ -9,6 +10,7 @@ from services.voice_service import VoiceService
 from config.hard_messages import START_MESSAGE, CLEAR_HISTORY_MESSAGE, HELP_MESSAGE
 from datetime import datetime
 import random
+import os
 
 # Инициализируем сервисы
 openai_service = OpenAIService()
@@ -108,8 +110,17 @@ async def handle_message(message: Message) -> None:
             chat_id=chat_id if message.chat.type != "private" else None
         )
         
-        # Отправляем ответ пользователю
-        await message.answer(response)
+        # Преобразуем ответ в голосовое сообщение
+        audio_path = await voice_service.text_to_speech(response)
+        
+        try:
+            # Отправляем голосовое сообщение
+            voice = FSInputFile(audio_path)
+            await message.answer_voice(voice)
+        finally:
+            # Удаляем временный аудиофайл
+            if os.path.exists(audio_path):
+                os.remove(audio_path)
         
     except Exception as e:
         await message.answer(f"❌ Произошла ошибка: {str(e)}")
@@ -271,8 +282,17 @@ async def cmd_roll(message: Message) -> None:
             chat_id=chat_id if message.chat.type != "private" else None
         )
         
-        # Отправляем ответ пользователю
-        await message.answer(response)
+        # Преобразуем ответ в голосовое сообщение
+        audio_path = await voice_service.text_to_speech(response)
+        
+        try:
+            # Отправляем голосовое сообщение
+            voice = FSInputFile(audio_path)
+            await message.answer_voice(voice)
+        finally:
+            # Удаляем временный аудиофайл
+            if os.path.exists(audio_path):
+                os.remove(audio_path)
         
     except Exception as e:
         await message.answer(f"❌ Произошла ошибка при броске кубиков: {str(e)}")
