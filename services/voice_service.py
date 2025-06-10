@@ -1,5 +1,8 @@
 from openai import OpenAI
-from config.config import OPENAI_API_KEY, TRANSCRIBE_MODEL
+from config.config import (
+    OPENAI_API_KEY, TRANSCRIBE_MODEL,
+    TTS_MODEL, TTS_VOICE, TTS_INSTRUCTIONS
+)
 import os
 import tempfile
 from aiogram.types import Voice
@@ -52,10 +55,10 @@ class VoiceService:
         try:
             # Генерируем речь с помощью OpenAI API
             response = self.client.audio.speech.create(
-                model="gpt-4o-mini-tts",
-                voice="ballad",
+                model=TTS_MODEL,
+                voice=TTS_VOICE,
                 input=text,
-                instructions="Говори как Мэтью Мерсер - ведущий игры Подземелье и Драконы"
+                instructions=TTS_INSTRUCTIONS
             )
             
             # Сохраняем аудио в файл

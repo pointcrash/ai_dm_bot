@@ -1,6 +1,7 @@
 import os
 from dotenv import load_dotenv
 from config.adventure_promt import EASY_ADVENTURE_PROMT
+from config.tts_promt import TTS_PROMT
 
 # Загружаем переменные окружения
 load_dotenv()
@@ -22,4 +23,8 @@ DEFAULT_REQUESTS_LIMIT = int(os.getenv("DEFAULT_REQUESTS_LIMIT", "50"))
 MAX_HISTORY_LENGTH = int(os.getenv("MAX_HISTORY_LENGTH", "10"))
 MAIN_PROMT = EASY_ADVENTURE_PROMT
 
+# Конфигурация голосового сервиса
 TRANSCRIBE_MODEL = os.getenv("TRANSCRIBE_MODEL", "gpt-4o-mini-transcribe")
+TTS_MODEL = os.getenv("TTS_MODEL", "gpt-4o-mini-tts")
+TTS_VOICE = os.getenv("TTS_VOICE", "ballad")
+TTS_INSTRUCTIONS = TTS_PROMT

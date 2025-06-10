@@ -8,7 +8,7 @@ from handlers.message_handlers import (
     cmd_clear_history, cmd_create_summary,
     cmd_group_members, cmd_join_group, cmd_leave_group,
     cmd_remove_member, cmd_roll, cmd_campaign, cmd_delete_campaign,
-    cmd_stats, handle_message
+    cmd_stats, cmd_toggle_voice, handle_message
 )
 
 class TelegramBot:
@@ -31,6 +31,7 @@ class TelegramBot:
         self.dp.message.register(cmd_remove_member, Command("remove_member"))
         self.dp.message.register(cmd_roll, Command("roll"))
         self.dp.message.register(cmd_stats, Command("stats"))
+        self.dp.message.register(cmd_toggle_voice, Command("voice"))
         self.dp.message.register(handle_message)
 
     async def _setup_commands(self):
@@ -46,7 +47,8 @@ class TelegramBot:
             BotCommand(command="join", description="Присоединиться к группе"),
             BotCommand(command="leave", description="Покинуть группу"),
             BotCommand(command="remove_member", description="Удалить участника из группы"),
-            BotCommand(command="stats", description="Показать статистику использования")
+            BotCommand(command="stats", description="Показать статистику использования"),
+            BotCommand(command="voice", description="Включить/выключить голосовые ответы")
         ]
         await self.bot.set_my_commands(commands, scope=BotCommandScopeDefault())
 

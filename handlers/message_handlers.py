@@ -7,6 +7,7 @@ from services.group_service import GroupService
 from services.character_service import CharacterService
 from services.campaign_service import CampaignService
 from services.voice_service import VoiceService
+from services.chat_settings_service import ChatSettingsService
 from config.hard_messages import START_MESSAGE, CLEAR_HISTORY_MESSAGE, HELP_MESSAGE
 from datetime import datetime
 import random
@@ -18,6 +19,7 @@ group_service = GroupService()
 character_service = CharacterService()
 campaign_service = CampaignService()
 voice_service = VoiceService()
+chat_settings_service = ChatSettingsService()
 
 # Словарь для хранения состояния редактирования описания кампании
 campaign_edit_states = {}
@@ -110,17 +112,22 @@ async def handle_message(message: Message) -> None:
             chat_id=chat_id if message.chat.type != "private" else None
         )
         
-        # Преобразуем ответ в голосовое сообщение
-        audio_path = await voice_service.text_to_speech(response)
-        
-        try:
-            # Отправляем голосовое сообщение
-            voice = FSInputFile(audio_path)
-            await message.answer_voice(voice)
-        finally:
-            # Удаляем временный аудиофайл
-            if os.path.exists(audio_path):
-                os.remove(audio_path)
+        # Проверяем, включен ли режим голосовых ответов
+        if chat_settings_service.is_voice_enabled(chat_id):
+            # Преобразуем ответ в голосовое сообщение
+            audio_path = await voice_service.text_to_speech(response)
+            
+            try:
+                # Отправляем голосовое сообщение
+                voice = FSInputFile(audio_path)
+                await message.answer_voice(voice)
+            finally:
+                # Удаляем временный аудиофайл
+                if os.path.exists(audio_path):
+                    os.remove(audio_path)
+        else:
+            # Отправляем текстовый ответ
+            await message.answer(response)
         
     except Exception as e:
         await message.answer(f"❌ Произошла ошибка: {str(e)}")
@@ -282,17 +289,22 @@ async def cmd_roll(message: Message) -> None:
             chat_id=chat_id if message.chat.type != "private" else None
         )
         
-        # Преобразуем ответ в голосовое сообщение
-        audio_path = await voice_service.text_to_speech(response)
-        
-        try:
-            # Отправляем голосовое сообщение
-            voice = FSInputFile(audio_path)
-            await message.answer_voice(voice)
-        finally:
-            # Удаляем временный аудиофайл
-            if os.path.exists(audio_path):
-                os.remove(audio_path)
+        # Проверяем, включен ли режим голосовых ответов
+        if chat_settings_service.is_voice_enabled(chat_id):
+            # Преобразуем ответ в голосовое сообщение
+            audio_path = await voice_service.text_to_speech(response)
+            
+            try:
+                # Отправляем голосовое сообщение
+                voice = FSInputFile(audio_path)
+                await message.answer_voice(voice)
+            finally:
+                # Удаляем временный аудиофайл
+                if os.path.exists(audio_path):
+                    os.remove(audio_path)
+        else:
+            # Отправляем текстовый ответ
+            await message.answer(response)
         
     except Exception as e:
         await message.answer(f"❌ Произошла ошибка при броске кубиков: {str(e)}")
@@ -307,4 +319,14 @@ async def cmd_delete_campaign(message: Message) -> None:
         else:
             await message.answer("❌ Произошла ошибка при удалении описания кампании.")
     except Exception as e:
-        await message.answer(f"❌ Произошла ошибка при удалении описания кампании: {str(e)}") 
+        await message.answer(f"❌ Произошла ошибка при удалении описания кампании: {str(e)}")
+
+async def cmd_toggle_voice(message: Message) -> None:
+    """Переключает режим голосовых ответов"""
+    try:
+        chat_id = message.chat.id
+        is_enabled = chat_settings_service.toggle_voice(chat_id)
+        status = "включен" if is_enabled else "выключен"
+        await message.answer(f"✅ Режим голосовых ответов {status}")
+    except Exception as e:
+        await message.answer(f"❌ Произошла ошибка при переключении режима голосовых ответов: {str(e)}") 
