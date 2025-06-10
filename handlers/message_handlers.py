@@ -94,16 +94,16 @@ async def handle_message(message: Message) -> None:
             first_name=message.from_user.first_name,
             username=message.from_user.username
         )
-        
-        # Отправляем "печатает..." статус
-        await message.bot.send_chat_action(chat_id=chat_id, action="typing")
-        
+
         # Получаем текст сообщения (из текста или голосового сообщения)
         user_message = message.text
         if message.voice:
             user_message = await voice_service.transcribe_voice(message.voice)
             # Отправляем расшифровку голосового сообщения
             await message.answer(f"🎤 Расшифровка: {user_message}")
+
+        # Отправляем "печатает..." статус
+        await message.bot.send_chat_action(chat_id=chat_id, action="typing")
         
         # Получаем ответ от OpenAI с учетом истории диалога
         response = await openai_service.get_response(
@@ -111,11 +111,17 @@ async def handle_message(message: Message) -> None:
             user_message=user_message,
             chat_id=chat_id if message.chat.type != "private" else None
         )
-        
+
         # Проверяем, включен ли режим голосовых ответов
         if chat_settings_service.is_voice_enabled(chat_id):
+            # Отправляем "говорит..." статус
+            await message.bot.send_chat_action(chat_id=chat_id, action="record_voice")
+
             # Преобразуем ответ в голосовое сообщение
             audio_path = await voice_service.text_to_speech(response)
+
+            # Отправляем "загружает голосовое сообщение..." статус
+            await message.bot.send_chat_action(chat_id=chat_id, action="upload_voice")
             
             try:
                 # Отправляем голосовое сообщение
@@ -291,8 +297,14 @@ async def cmd_roll(message: Message) -> None:
         
         # Проверяем, включен ли режим голосовых ответов
         if chat_settings_service.is_voice_enabled(chat_id):
+            # Отправляем "говорит..." статус
+            await message.bot.send_chat_action(chat_id=chat_id, action="record_voice")
+
             # Преобразуем ответ в голосовое сообщение
             audio_path = await voice_service.text_to_speech(response)
+
+            # Отправляем "загружает голосовое сообщение..." статус
+            await message.bot.send_chat_action(chat_id=chat_id, action="upload_voice")
             
             try:
                 # Отправляем голосовое сообщение
