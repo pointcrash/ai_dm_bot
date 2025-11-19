@@ -46,3 +46,4 @@ logs/
 /data
 /logs
 .cursor
+/simple_histories
