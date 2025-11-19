@@ -1,3 +1,4 @@
+import re
 from typing import Dict, List
 from dataclasses import dataclass, field
 from datetime import datetime
@@ -5,10 +6,12 @@ import json
 import os
 from pathlib import Path
 from config.config import MAIN_PROMT, MAX_HISTORY_LENGTH
-from services.summary_service import SummaryService
+from services.rag_service import get_or_create_rag_manager, RAGManager, delete_manager_and_clear_history, get_context
 from services.character_service import CharacterService
 from services.group_service import GroupService
 from services.campaign_service import CampaignService
+from utils.utils import get_path_to_simple_history_file
+
 
 @dataclass
 class Message:
@@ -34,24 +37,19 @@ class Message:
 @dataclass
 class ChatHistory:
     messages: List[Message] = field(default_factory=list)
-    max_history: int = MAX_HISTORY_LENGTH
+    max_history_length: int = MAX_HISTORY_LENGTH
     summary: str = ""
 
-    def add_message(self, role: str, content: str):
-        if len(self.messages) >= self.max_history:
-            self._create_summary()
-        self.messages.append(Message(role=role, content=content))
+    def add_message(self, role: str, content: str, chat_id: int):
+        if len(self.messages) >= self.max_history_length:
 
-    def _create_summary(self):
-        # Получаем саммари от SummaryService
-        summary_service = SummaryService()
-        summary = summary_service.create_summary(self.messages, self.summary)
-        
-        # Сохраняем саммари
-        self.summary = summary
-        
-        # Очищаем историю
-        self.messages.clear()
+            docs_path: Path = get_path_to_simple_history_file(chat_id)
+            rag_manager: RAGManager = get_or_create_rag_manager(docs_path)
+            rag_manager.update_index()
+
+            self.messages.clear()
+
+        self.messages.append(Message(role=role, content=content))
 
     def get_messages(self) -> List[dict]:
         messages = [{"role": msg.role, "content": msg.content} for msg in self.messages]
@@ -209,15 +207,15 @@ class HistoryService:
 
     def add_user_message(self, chat_id: int, content: str):
         history = self.get_chat_history(chat_id)
-        history.add_message("user", content)
+        history.add_message("user", content, chat_id)
         self._save_history(chat_id)
 
     def add_assistant_message(self, chat_id: int, content: str):
         history = self.get_chat_history(chat_id)
-        history.add_message("assistant", content)
+        history.add_message("assistant", content, chat_id)
         self._save_history(chat_id)
 
-    def _get_system_message(self, chat_id: int, history: ChatHistory) -> dict:
+    def _get_system_message(self, chat_id: int, user_message: str) -> dict:
         """Формирует system-сообщение для API"""
         system_content = MAIN_PROMT
 
@@ -233,15 +231,18 @@ class HistoryService:
         if group_context:
             system_content += group_context
 
-        # Добавляем саммари, если есть
-        if history.summary:
-            system_content += f"\n\nПредыдущий контекст диалога: {history.summary}"
-            
+        context: list[str] = get_context(chat_id, user_message)
+        if context:
+            system_content += f"\n\nПолезные отрывки из истории: {'\n'.join(context)} "
+
+        # if history.summary:
+        #     system_content += f"\n\nПредыдущий контекст диалога: {history.summary}"
+
         return {"role": "system", "content": system_content}
 
-    def get_messages_for_api(self, chat_id: int) -> List[dict]:
+    def get_messages_for_api(self, chat_id: int, user_message: str) -> list[dict]:
         history = self.get_chat_history(chat_id)
-        system_message = self._get_system_message(chat_id, history)
+        system_message = self._get_system_message(chat_id, user_message)
         return [system_message] + history.get_messages()
 
     def clear_history(self, chat_id: int):
@@ -249,6 +250,21 @@ class HistoryService:
             self.chats[chat_id].clear()
             self._save_history(chat_id)
 
+            docs_path: Path = get_path_to_simple_history_file(chat_id)
+            delete_manager_and_clear_history(docs_path)
+
     def get_formatted_history(self, chat_id: int) -> str:
         history = self.get_chat_history(chat_id)
-        return history.get_formatted_history() 
+        return history.get_formatted_history()
+
+    @staticmethod
+    def add_couple_of_messages_to_simple_dialog_history(chat_id: int, user_content: str, ai_response_content: str):
+        path = get_path_to_simple_history_file(chat_id)
+
+        #  Заменяю лишние переносы - одним
+        user_content = re.sub(r"\n+", "\n", user_content)
+        ai_response_content = re.sub(r"\n+", "\n", ai_response_content)
+
+        with open(path, "a", encoding="utf-8") as f:
+            f.write("Сообщение пользователя:" + "\n" + user_content + "\n\n")
+            f.write("Ответ мастера:" + "\n" + ai_response_content + "\n\n")

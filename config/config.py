@@ -28,3 +28,11 @@ TRANSCRIBE_MODEL = os.getenv("TRANSCRIBE_MODEL", "gpt-4o-mini-transcribe")
 TTS_MODEL = os.getenv("TTS_MODEL", "gpt-4o-mini-tts")
 TTS_VOICE = os.getenv("TTS_VOICE", "ballad")
 TTS_INSTRUCTIONS = TTS_PROMT
+
+# INDEX_PATH = "faiss_index"
+# DOCS_PATH = "docs.txt"
+# PROCESSED_FILE = "processed_offset.txt"
+FAISS_SUFFIX = "_faiss"
+OFFSET_SUFFIX = "_offset.txt"
+
+print(MAX_HISTORY_LENGTH)

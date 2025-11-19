@@ -56,7 +56,7 @@ class OpenAIService:
         self.history_service.add_user_message(chat_id, result_message)
         
         # Получаем историю диалога
-        messages = self.history_service.get_messages_for_api(chat_id)
+        messages = self.history_service.get_messages_for_api(chat_id, user_message)
         
         # Логируем запрос
         self.logger_service.log_request(user_id, messages)
@@ -64,10 +64,10 @@ class OpenAIService:
         # Получаем ответ от OpenAI
         response = await self.client.chat.completions.create(
             model=self.model,
-            messages=messages,
+            messages=messages,  # type: ignore
             temperature=self.temperature
         )
-        
+
         # Сохраняем ответ ассистента в историю
         assistant_response = response.choices[0].message.content
         self.history_service.add_assistant_message(chat_id, assistant_response)

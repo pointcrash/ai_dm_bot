@@ -1,17 +1,20 @@
-from typing import Optional
+import traceback
+from pathlib import Path
 from aiogram.types import Message
-from aiogram.filters import Command
 from aiogram.types import FSInputFile
 from services.openai_service import OpenAIService
 from services.group_service import GroupService
 from services.character_service import CharacterService
 from services.campaign_service import CampaignService
+from services.rag_service import RAGManager, get_or_create_rag_manager, get_context
 from services.voice_service import VoiceService
 from services.chat_settings_service import ChatSettingsService
 from config.hard_messages import START_MESSAGE, CLEAR_HISTORY_MESSAGE, HELP_MESSAGE
 from datetime import datetime
 import random
 import os
+
+from utils.utils import get_path_to_simple_history_file
 
 # Инициализируем сервисы
 openai_service = OpenAIService()
@@ -71,6 +74,7 @@ async def handle_message(message: Message) -> None:
     
     # Проверяем наличие текста или голосового сообщения
     if not message.text and not message.voice:
+        await message.answer(f"❌ Я умею обрабатывать только текстовые или голосовые сообщения")
         return
     
     # Игнорируем пересланные сообщения и ответы на сообщения
@@ -102,14 +106,22 @@ async def handle_message(message: Message) -> None:
             # Отправляем расшифровку голосового сообщения
             await message.answer(f"🎤 Расшифровка: {user_message}")
 
+
         # Отправляем "печатает..." статус
         await message.bot.send_chat_action(chat_id=chat_id, action="typing")
-        
+
         # Получаем ответ от OpenAI с учетом истории диалога
         response = await openai_service.get_response(
             user_id=user_id,
             user_message=user_message,
             chat_id=chat_id if message.chat.type != "private" else None
+        )
+
+        # Записываем в файл истории новую пару сообщений
+        openai_service.history_service.add_couple_of_messages_to_simple_dialog_history(
+            chat_id=chat_id,
+            user_content=user_message,
+            ai_response_content=response,
         )
 
         # Проверяем, включен ли режим голосовых ответов
@@ -136,6 +148,7 @@ async def handle_message(message: Message) -> None:
             await message.answer(response)
         
     except Exception as e:
+        traceback.print_exc()
         await message.answer(f"❌ Произошла ошибка: {str(e)}")
 
 async def cmd_history(message: Message) -> None:
@@ -294,6 +307,8 @@ async def cmd_roll(message: Message) -> None:
             user_message=result,
             chat_id=chat_id if message.chat.type != "private" else None
         )
+
+        # TODO: Заменить старые вызов АИ на новый через РАГ
         
         # Проверяем, включен ли режим голосовых ответов
         if chat_settings_service.is_voice_enabled(chat_id):
